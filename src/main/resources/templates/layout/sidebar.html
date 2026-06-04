@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="sidebar" class="sidebar border-end vh-100 position-fixed" 
+         style="width: 250px; z-index: 1000; overflow-y: auto; background-color: #e3f2fd;">
+        <div class="p-3 text-center border-bottom border-secondary">
+            <h4 class="fw-bold m-0 text-dark">ZIPPERS</h4>
+        </div>
+        
+        <div class="list-group list-group-flush mt-3 pb-4">
+            <a th:href="@{/dashboard}" 
+                th:attr="hx-get=@{/dashboard/resumen}" 
+                hx-target="#main-content" 
+                hx-select=".main-content" 
+                hx-swap="outerHTML"
+                class="list-group-item list-group-item-action border-0 py-3" 
+                style="background-color: transparent; color: #000;">
+            <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+            </a>
+            
+            <p class="fw-bold ms-3 mt-3 mb-1" style="font-size: 0.75rem; color: #000;">ADMINISTRACIÓN</p>
+            <a th:href="@{/dashboard(modulo=usuarios)}" 
+               th:attr="hx-get=@{/dashboard(modulo=usuarios)}" 
+               hx-target="#main-content" 
+               hx-select=".main-content" 
+               hx-swap="outerHTML"
+               class="list-group-item list-group-item-action border-0 py-2" 
+               style="background-color: transparent; color: #000;">
+                <i class="fas fa-users me-2"></i> Usuarios
+            </a>
+            <a th:href="@{/dashboard(modulo=perfiles)}" 
+               th:attr="hx-get=@{/dashboard(modulo=perfiles)}" 
+               hx-target="#main-content" 
+               hx-select=".main-content" 
+               hx-swap="outerHTML"
+               class="list-group-item list-group-item-action border-0 py-2" 
+               style="background-color: transparent; color: #000;">
+                <i class="fas fa-shield-alt me-2"></i> Perfiles
+            </a>
+
+            <p class="fw-bold ms-3 mt-3 mb-1" style="font-size: 0.75rem; color: #000;">CATÁLOGO Y ALMACÉN</p>
+            <a th:href="@{/dashboard(modulo=categorias)}" 
+               th:attr="hx-get=@{/dashboard(modulo=categorias)}" 
+               hx-target="#main-content" 
+               hx-select=".main-content" 
+               hx-swap="outerHTML"
+               class="list-group-item list-group-item-action border-0 py-2" 
+               style="background-color: transparent; color: #000;">
+                <i class="fas fa-tags me-2"></i> Categorías
+            </a>
+            <a th:href="@{/dashboard(modulo=productos)}"
+                th:attr="hx-get=@{/dashboard(modulo=productos)}"
+                hx-target="#main-content"
+                hx-select=".main-content"
+                hx-swap="outerHTML"
+                class="list-group-item list-group-item-action border-0 py-2"
+                style="background-color: transparent; color: #000;">
+            <i class="fas fa-tshirt me-2"></i> Productos
+            </a>
+            <a th:href="@{/dashboard(modulo=inventario)}" 
+               th:attr="hx-get=@{/dashboard(modulo=inventario)}" 
+               hx-target="#main-content"   
+               hx-select=".main-content" 
+               hx-swap="outerHTML"
+               class="list-group-item list-group-item-action border-0 py-2" 
+               style="background-color: transparent; color: #000;">
+                <i class="fas fa-boxes me-2"></i> Inventario
+            </a>
+            <a th:href="@{/dashboard(modulo=temporadas-descuentos)}" 
+               th:attr="hx-get=@{/dashboard(modulo=temporadas-descuentos)}" 
+               hx-target="#main-content"   
+               hx-select=".main-content" 
+               hx-swap="outerHTML"
+               class="list-group-item list-group-item-action border-0 py-2" 
+               style="background-color: transparent; color: #000;">
+                <i class="fas fa-percentage me-2"></i> Temporadas y Dsctos.
+            </a>
+
+            <p class="fw-bold ms-3 mt-3 mb-1" style="font-size: 0.75rem; color: #000;">COMERCIAL</p>
+            <a th:href="@{/dashboard(modulo=clientes)}" 
+               th:attr="hx-get=@{/dashboard(modulo=clientes)}" 
+               hx-target="#main-content" 
+               hx-select=".main-content" 
+               hx-swap="outerHTML"
+               class="list-group-item list-group-item-action border-0 py-2" 
+               style="background-color: transparent; color: #000;">
+                <i class="fas fa-address-card me-2"></i> Clientes
+            </a>
+            <a th:href="@{/dashboard(modulo=ventas)}" 
+               th:attr="hx-get=@{/dashboard(modulo=ventas)}" 
+               hx-target="#main-content" 
+               hx-select=".main-content" 
+               hx-swap="outerHTML"
+               class="list-group-item list-group-item-action border-0 py-2" 
+               style="background-color: transparent; color: #000;">
+                <i class="fas fa-shopping-cart me-2"></i> Ventas
+            </a>
+            <a th:href="@{/dashboard(modulo=despacho)}" 
+               th:attr="hx-get=@{/dashboard(modulo=despacho)}" 
+               hx-target="#main-content" 
+               hx-select=".main-content" 
+               hx-swap="outerHTML"
+               class="list-group-item list-group-item-action border-0 py-2" 
+               style="background-color: transparent; color: #000;">
+                <i class="fas fa-truck-fast me-2"></i> Despacho
+            </a>
+            <a th:href="@{/dashboard(modulo=recojo)}" 
+               th:attr="hx-get=@{/dashboard(modulo=recojo)}" 
+               hx-target="#main-content" 
+               hx-select=".main-content" 
+               hx-swap="outerHTML"
+               class="list-group-item list-group-item-action border-0 py-2" 
+               style="background-color: transparent; color: #000;">
+                <i class="fas fa-people-carry-box me-2"></i> Recojo
+            </a>
+            <a th:href="@{/dashboard(modulo=cotizaciones)}" 
+               th:attr="hx-get=@{/dashboard(modulo=cotizaciones)}" 
+               hx-target="#main-content" 
+               hx-select=".main-content" 
+               hx-swap="outerHTML"
+               class="list-group-item list-group-item-action border-0 py-2" 
+               style="background-color: transparent; color: #000;">
+                <i class="fas fa-file-invoice-dollar me-2"></i> Cotizaciones
+            </a>
+            
+            <p class="fw-bold ms-3 mt-3 mb-1" style="font-size: 0.75rem; color: #000;">CONFIGURACIÓN</p>
+            <a th:href="@{/dashboard(modulo=gestion-tienda)}" 
+                th:attr="hx-get=@{/dashboard(modulo=gestion-tienda)}" 
+                hx-target="#main-content" 
+                hx-select=".main-content" 
+                hx-swap="outerHTML"
+                class="list-group-item list-group-item-action border-0 py-2" 
+                style="background-color: transparent; color: #000;">
+                <i class="fas fa-store me-2"></i> Gestión Tienda
+            </a>
+            <a th:href="@{/dashboard(modulo=presentaciones)}" 
+                th:attr="hx-get=@{/dashboard(modulo=presentaciones)}" 
+                hx-target="#main-content" 
+                hx-select=".main-content" 
+                hx-swap="outerHTML"
+                class="list-group-item list-group-item-action border-0 py-2" 
+                style="background-color: transparent; color: #000;">
+                <i class="fas fa-box-open me-2"></i> Presentaciones
+            </a>
+            <a th:href="@{/dashboard(modulo=sitio-web)}" 
+                th:attr="hx-get=@{/dashboard(modulo=sitio-web)}" 
+                hx-target="#main-content" 
+                hx-select=".main-content" 
+                hx-swap="outerHTML"
+                class="list-group-item list-group-item-action border-0 py-2 fw-bold" 
+                style="background-color: #cce5ff; color: #0d6efd; border-radius: 0 20px 20px 0; margin-right: 10px;">
+                <i class="fas fa-globe me-2"></i> Sitio Web
+            </a>
+
+            <!-- Botón directo al catálogo externo -->
+            <div class="mt-4 px-3 mb-4">
+                <a th:href="@{/catalogo}" target="_blank" class="btn btn-dark w-100 fw-bold shadow-sm d-flex align-items-center justify-content-center">
+                    <i class="fas fa-external-link-alt me-2"></i> Ver Tienda Online
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

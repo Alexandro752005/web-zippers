@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="tabla-productos" id="productos-table-wrap" class="w-100">
+    <div class="table-responsive w-100">
+        <table class="table table-hover align-middle border">
+            <thead class="table-light text-nowrap">
+            <tr>
+                <th class="py-3 px-3">ID</th>
+                <th class="py-3 px-3">Nombre</th>
+                <th class="py-3 px-3">Categoría</th>
+                <th class="py-3 px-3">Precio Costo</th>
+                <th class="py-3 px-3">Precio Venta</th>
+                <th class="py-3 px-3 text-center">Oferta</th>
+                <th class="py-3 px-3 text-center">Stock</th>
+                <th class="py-3 px-3 text-center">Estado</th>
+                <th class="py-3 px-3 text-end">Acciones</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:if="${#lists.isEmpty(productos)}">
+                <td colspan="9" class="text-center text-muted py-5">
+                    <i class="fas fa-box-open fa-2x mb-3 opacity-50"></i><br>
+                    No hay productos para mostrar.
+                </td>
+            </tr>
+
+            <tr th:each="p : ${productos}">
+                <td class="px-3 fw-bold text-secondary" th:text="${#numbers.formatInteger(p.id_producto, 3)}"></td>
+                <td class="px-3 fw-bold text-dark" th:text="${p.nombre}">Producto</td>
+                <td class="px-3 text-secondary" th:text="${p.categoria != null ? p.categoria.nombre : '-'}">Categoría</td>
+                <td class="px-3 text-secondary" th:text="${'S/. ' + #numbers.formatDecimal(p.precio_costo != null ? p.precio_costo : 0, 1, 2)}">0.00</td>
+                <td class="px-3 fw-bold text-success" th:text="${'S/. ' + #numbers.formatDecimal(p.precio_venta != null ? p.precio_venta : 0, 1, 2)}">0.00</td>
+                <td class="px-3 text-center">
+                    <span th:if="${p.oferta == null || p.oferta == 0}" class="text-muted">-</span>
+                    <span th:if="${p.oferta != null && p.oferta > 0}" class="badge bg-info" th:text="${p.oferta + '%'}">10%</span>
+                </td>
+                <td class="px-3 text-center fw-bold" th:classappend="${p.stock != null && p.stock_minimo != null && p.stock <= p.stock_minimo} ? 'text-danger' : 'text-primary'" th:text="${p.stock}">0</td>
+                <td class="px-3 text-center">
+                    <span class="badge rounded-pill px-3 py-2" th:classappend="${p.estado == 'ACTIVO'} ? 'bg-success' : 'bg-secondary'" th:text="${p.estado}">ACTIVO</span>
+                </td>
+                <td class="px-3 text-end text-nowrap">
+                    <button class="btn btn-sm btn-outline-primary rounded-2 shadow-sm" type="button"
+                            th:attr="hx-get=@{/dashboard/productos(action='edit', id=${p.id_producto})}"
+                            hx-target="#producto-modal-wrap" hx-swap="innerHTML" title="Editar">
+                        <i class="fas fa-pen"></i>
+                    </button>
+
+                    <button class="btn btn-sm rounded-2 shadow-sm ms-1" th:classappend="${p.estado == 'ACTIVO'} ? 'btn-outline-danger' : 'btn-outline-success'" type="button"
+                            th:attr="hx-post=@{/dashboard/productos(action='toggle-estado', id=${p.id_producto}, buscar=${buscar}, page=${currentPage}, size=${size}, sort=${sort}, dir=${dir})}"
+                            hx-target="#productos-table-wrap" hx-swap="outerHTML" title="Cambiar Estado">
+                        <i class="fas" th:classappend="${p.estado == 'ACTIVO'} ? 'fa-trash-alt' : 'fa-check'"></i>
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-3 px-2">
+        <small class="text-muted fw-bold" th:text="'Página ' + (${currentPage}+1) + ' de ' + (${totalPages == 0 ? 1 : totalPages})"></small>
+
+        <div class="btn-group shadow-sm">
+            <button class="btn btn-sm btn-light border"
+                    th:disabled="${currentPage == 0}"
+                    th:attr="hx-get=@{/dashboard/productos(action='list', page=${currentPage-1}, size=${size}, buscar=${buscar}, sort=${sort}, dir=${dir})}"
+                    hx-target="#productos-table-wrap" hx-swap="outerHTML">
+                <i class="fas fa-chevron-left me-1"></i> Anterior
+            </button>
+            <button class="btn btn-sm btn-light border"
+                    th:disabled="${currentPage+1 >= totalPages}"
+                    th:attr="hx-get=@{/dashboard/productos(action='list', page=${currentPage+1}, size=${size}, buscar=${buscar}, sort=${sort}, dir=${dir})}"
+                    hx-target="#productos-table-wrap" hx-swap="outerHTML">
+                Siguiente <i class="fas fa-chevron-right ms-1"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

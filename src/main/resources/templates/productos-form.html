@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="form-producto">
+
+    <div class="modal fade show" style="display:block; background: rgba(0,0,0,0.6);" tabindex="-1" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content shadow-lg border-0">
+
+                <div class="modal-header bg-primary text-white border-0">
+                    <h5 class="modal-title fw-bold">
+                        <i class="fas fa-tshirt me-2"></i>
+                        <span th:text="${productoDto.idProducto == null ? 'Registrar Nuevo Producto' : 'Editar Producto'}"></span>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white shadow-none" aria-label="Close"
+                            onclick="this.closest('.modal').remove(); document.querySelector('.modal-backdrop')?.remove();"></button>
+                </div>
+
+                <div class="modal-body p-4 bg-light">
+
+                    <ul class="nav nav-tabs mb-3 border-bottom pb-1" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active fw-bold text-dark border-0" data-bs-toggle="tab" data-bs-target="#tab-datos" type="button" role="tab">
+                                <i class="fas fa-info-circle me-1 text-primary"></i> 1. Ficha Técnica y Variantes
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-bold text-dark border-0" data-bs-toggle="tab" data-bs-target="#tab-fotos" type="button" role="tab"
+                                    th:disabled="${productoDto.idProducto == null}">
+                                <i class="fas fa-images me-1 text-warning"></i> 2. Galería Multimedia
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content bg-white p-4 rounded-3 shadow-sm border">
+                        
+                        <div class="tab-pane fade show active" id="tab-datos" role="tabpanel">
+                            <form th:object="${productoDto}"
+                                  th:attr="hx-post=@{/dashboard/productos(action='save')}"
+                                  hx-target="#producto-modal-wrap"
+                                  hx-swap="innerHTML"
+                                  id="form-producto-principal">
+
+                                <input type="hidden" th:field="*{idProducto}">
+
+                                <h6 class="fw-bold text-dark mb-3 border-bottom pb-2">Información Base</h6>
+                                <div class="row g-3 mb-4">
+                                    <div class="col-lg-6">
+                                        <label class="form-label fw-bold small text-secondary">Nombre del Producto <span class="text-danger">*</span></label>
+                                        <input class="form-control form-control-sm bg-light" th:field="*{nombre}" placeholder="Ej. Casaca Denim Oversize">
+                                        <div class="text-danger small fw-bold mt-1" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <label class="form-label fw-bold small text-secondary">Código Único (SKU) <span class="text-danger">*</span></label>
+                                        <input class="form-control form-control-sm text-uppercase fw-bold text-primary bg-light" th:field="*{codigo}" placeholder="Ej. ZP-001">
+                                        <div class="text-danger small fw-bold mt-1" th:if="${#fields.hasErrors('codigo')}" th:errors="*{codigo}"></div>
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <label class="form-label fw-bold small text-secondary">Género <span class="text-danger">*</span></label>
+                                        <select class="form-select form-select-sm bg-light" th:field="*{genero}">
+                                            <option value="UNISEX">UNISEX</option>
+                                            <option value="MUJER">MUJER</option>
+                                            <option value="HOMBRE">HOMBRE</option>
+                                            <option value="ADOLESCENTE">ADOLESCENTE</option>
+                                            <option value="INFANTIL">INFANTIL</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-lg-3">
+                                        <label class="form-label fw-bold small text-secondary">Categoría <span class="text-danger">*</span></label>
+                                        <select class="form-select form-select-sm bg-light" th:field="*{categoriaId}">
+                                            <option value="">Seleccione...</option>
+                                            <option th:each="c : ${categorias}" th:value="${c.id_categoria}" th:text="${c.nombre}"></option>
+                                        </select>
+                                        <div class="text-danger small fw-bold mt-1" th:if="${#fields.hasErrors('categoriaId')}" th:errors="*{categoriaId}"></div>
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <label class="form-label fw-bold small text-secondary">Marca</label>
+                                        <input class="form-control form-control-sm bg-light" th:field="*{marca}" placeholder="Ej. Zippers">
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <label class="form-label fw-bold small text-secondary">Temporada</label>
+                                        <select class="form-select form-select-sm bg-light" th:field="*{temporada}">
+                                            <option value="Atemporal">Atemporal (Todo el año)</option>
+                                            <option value="Otoño/Invierno">Otoño / Invierno</option>
+                                            <option value="Primavera/Verano">Primavera / Verano</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <label class="form-label fw-bold small text-secondary">Material Principal</label>
+                                        <input class="form-control form-control-sm bg-light" th:field="*{materialPrincipal}" placeholder="Ej. 100% Algodón">
+                                    </div>
+
+                                    <div class="col-lg-8">
+                                        <label class="form-label fw-bold small text-secondary">Descripción (Para Catálogo Web)</label>
+                                        <textarea class="form-control form-control-sm bg-light" rows="2" th:field="*{descripcion}" placeholder="Detalles de la prenda..."></textarea>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <label class="form-label fw-bold small text-secondary">Precio Costo (S/) <span class="text-danger">*</span></label>
+                                        <input class="form-control form-control-sm bg-light text-end fw-bold" type="number" step="0.01" min="0" th:field="*{precioCosto}" placeholder="0.00" id="global-precio-costo">
+                                        <div class="text-danger small fw-bold mt-1" th:if="${#fields.hasErrors('precioCosto')}" th:errors="*{precioCosto}"></div>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <label class="form-label fw-bold small text-secondary">Estado Interno</label>
+                                        <select class="form-select form-select-sm bg-light" th:field="*{estado}">
+                                            <option value="ACTIVO">ACTIVO</option>
+                                            <option value="INACTIVO">INACTIVO</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+                                    <h6 class="fw-bold text-dark mb-0">Gestión de Variantes (Stock y Precios)</h6>
+                                    <button type="button" id="add-variant-row" class="btn btn-sm btn-outline-primary rounded-pill fw-bold px-3">
+                                        <i class="fas fa-plus me-1"></i> Añadir Fila Manual
+                                    </button>
+                                </div>
+
+                                <div class="bg-primary bg-opacity-10 p-3 rounded-3 mb-3 border border-primary border-opacity-25">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h6 class="fw-bold text-primary mb-0"><i class="fas fa-magic me-1"></i> Creador Masivo Automático</h6>
+                                    </div>
+                                    <div class="row g-2 align-items-end">
+                                        <div class="col-md-5">
+                                            <label class="small fw-bold text-secondary">Tallas (Separadas por coma)</label>
+                                            <input type="text" id="mass-tallas" class="form-control form-control-sm" placeholder="Ej: S, M, L, XL">
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label class="small fw-bold text-secondary">Colores (Separados por coma)</label>
+                                            <input type="text" id="mass-colores" class="form-control form-control-sm" placeholder="Ej: Negro, Blanco, Azul">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="button" id="btn-generar-masivo" class="btn btn-sm btn-primary w-100 fw-bold shadow-sm">
+                                                Generar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="table-responsive bg-light rounded-3 border">
+                                    <table class="table table-sm align-middle mb-0 table-hover">
+                                        <thead class="table-secondary small text-uppercase text-secondary">
+                                            <tr>
+                                                <th style="width: 12%;">Talla</th>
+                                                <th style="width: 12%;">Medida(cm)</th>
+                                                <th style="width: 15%;">Color (Nombre)</th>
+                                                <th style="width: 8%; text-align: center;">Hex</th>
+                                                <th style="width: 15%;">P. Venta (S/)</th>
+                                                <th style="width: 12%;">Stock Inicial</th>
+                                                <th style="width: 15%; text-align: center;">Margen Ganancia</th>
+                                                <th style="width: 11%; text-align: center;">Quitar</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="variant-table-body" class="bg-white">
+                                            <tr class="variant-row" th:each="variante, varStat : *{variantes}">
+                                                <td>
+                                                    <input class="form-control form-control-sm fw-bold text-center" type="text" th:field="*{variantes[__${varStat.index}__].talla}" th:attr="data-name='variantes[' + ${varStat.index} + '].talla'" placeholder="S, 32...">
+                                                </td>
+                                                <td>
+                                                    <input class="form-control form-control-sm text-center" type="number" step="0.01" min="0" th:field="*{variantes[__${varStat.index}__].medidaCm}" th:attr="data-name='variantes[' + ${varStat.index} + '].medidaCm'" data-auto-filled="true">
+                                                </td>
+                                                <td>
+                                                    <input class="form-control form-control-sm" type="text" th:field="*{variantes[__${varStat.index}__].color}" th:attr="data-name='variantes[' + ${varStat.index} + '].color'" placeholder="Ej. Negro">
+                                                </td>
+                                                <td class="text-center">
+                                                    <input type="color" class="form-control form-control-color form-control-sm p-0 border-0 mx-auto" style="width: 30px; height: 30px;" th:field="*{variantes[__${varStat.index}__].codigoHex}" th:attr="data-name='variantes[' + ${varStat.index} + '].codigoHex'">
+                                                </td>
+                                                <td>
+                                                    <input class="form-control form-control-sm text-end fw-bold text-success variant-price-input" type="number" step="0.01" min="0" th:field="*{variantes[__${varStat.index}__].precioVenta}" th:attr="data-name='variantes[' + ${varStat.index} + '].precioVenta'" placeholder="0.00">
+                                                </td>
+                                                <td>
+                                                    <input class="form-control form-control-sm text-center fw-bold" type="number" min="0" th:field="*{variantes[__${varStat.index}__].stock}" th:attr="data-name='variantes[' + ${varStat.index} + '].stock'" placeholder="0">
+                                                </td>
+                                                <td class="text-center">
+                                                    <!-- SOLUCIÓN: data-margin-label aísla el JS de los cambios de clase estética -->
+                                                    <span class="badge bg-light text-dark border px-3 py-2" data-margin-label>--</span>
+                                                </td>
+                                                <td class="text-center">
+                                                    <button type="button" class="btn btn-sm btn-outline-danger remove-variant-row rounded-circle"><i class="fas fa-times"></i></button>
+                                                </td>
+                                                <input type="hidden" th:field="*{variantes[__${varStat.index}__].idVariante}" th:attr="data-name='variantes[' + ${varStat.index} + '].idVariante'">
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="text-danger small fw-bold mt-2 text-center" th:if="${#fields.hasErrors('variantes')}" th:errors="*{variantes}"></div>
+
+                                <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+                                    <button type="button" class="btn btn-light fw-bold border shadow-sm px-4" onclick="this.closest('.modal').remove(); document.querySelector('.modal-backdrop')?.remove();">
+                                        Cerrar
+                                    </button>
+                                    <button type="submit" class="btn btn-success fw-bold px-5 shadow-sm d-flex align-items-center">
+                                        <span class="htmx-indicator-label">Guardar Registro Completo</span>
+                                        <span class="spinner-border spinner-border-sm htmx-indicator ms-2 d-none" role="status"></span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="tab-pane fade" id="tab-fotos" role="tabpanel">
+                            <div th:if="${productoDto.idProducto == null}" class="alert alert-warning border-0 shadow-sm fw-bold text-center">
+                                <i class="fas fa-lock me-2"></i> Debes guardar el producto base primero para habilitar la subida de imágenes.
+                            </div>
+
+                            <div th:if="${productoDto.idProducto != null}"
+                                 th:attr="hx-get=@{/dashboard/productos(action='fotos', id=${productoDto.idProducto})}"
+                                 hx-trigger="revealed"
+                                 hx-target="#producto-fotos-holder"
+                                 hx-swap="innerHTML">
+                                <div id="producto-fotos-holder" class="text-center py-5">
+                                    <div class="spinner-border text-primary" role="status"></div>
+                                    <p class="text-muted mt-2 fw-bold">Preparando Galería...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<template id="variant-row-template">
+    <tr class="variant-row">
+        <td><input class="form-control form-control-sm fw-bold text-center" type="text" data-name="variantes[__index__].talla" placeholder="S, 32..."></td>
+        <td><input class="form-control form-control-sm text-center" type="number" step="0.01" min="0" data-name="variantes[__index__].medidaCm" data-auto-filled="true"></td>
+        <td><input class="form-control form-control-sm" type="text" data-name="variantes[__index__].color" placeholder="Ej. Negro"></td>
+        <td class="text-center"><input type="color" class="form-control form-control-color form-control-sm p-0 border-0 mx-auto" style="width: 30px; height: 30px;" data-name="variantes[__index__].codigoHex" value="#000000"></td>
+        <td><input class="form-control form-control-sm text-end fw-bold text-success variant-price-input" type="number" step="0.01" min="0" data-name="variantes[__index__].precioVenta" placeholder="0.00"></td>
+        <td><input class="form-control form-control-sm text-center fw-bold" type="number" min="0" data-name="variantes[__index__].stock" placeholder="0"></td>
+        <td class="text-center"><span class="badge bg-light text-dark border px-3 py-2" data-margin-label>--</span></td>
+        <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger remove-variant-row rounded-circle"><i class="fas fa-times"></i></button></td>
+        <input type="hidden" data-name="variantes[__index__].idVariante">
+    </tr>
+</template>
+
+<script>
+    (function() {
+        const formPrincipal = document.getElementById('form-producto-principal');
+        const variantBody = document.querySelector('#variant-table-body');
+        const addVariantButton = document.querySelector('#add-variant-row');
+        const btnGenerarMasivo = document.querySelector('#btn-generar-masivo');
+        const categorySelector = document.querySelector('select[name="categoriaId"]');
+        const costInput = document.getElementById('global-precio-costo');
+        
+        if (!formPrincipal) return;
+
+        function calcularMargen(precioCosto, precioVenta, labelElement) {
+            if (!precioVenta || !precioCosto || precioCosto <= 0) {
+                labelElement.textContent = '--';
+                // SOLUCIÓN: Nunca borramos la clase original, solo la pintamos por encima
+                labelElement.className = 'badge bg-light text-dark border px-3 py-2';
+                return;
+            }
+            const margin = ((precioVenta - precioCosto) / precioCosto) * 100;
+            labelElement.textContent = `${margin.toFixed(1)}%`;
+            
+            if(margin >= 30) labelElement.className = 'badge bg-success px-3 py-2 shadow-sm';
+            else if(margin >= 15) labelElement.className = 'badge bg-warning text-dark px-3 py-2 shadow-sm';
+            else labelElement.className = 'badge bg-danger px-3 py-2 shadow-sm';
+        }
+
+        function refreshAllMarginLabels() {
+            const costo = parseFloat(costInput.value) || 0;
+            variantBody.querySelectorAll('tr.variant-row').forEach(row => {
+                const precioVentaInput = row.querySelector('.variant-price-input');
+                // SOLUCIÓN: Buscamos por atributo [data-margin-label], imposible de borrar
+                const labelElement = row.querySelector('[data-margin-label]'); 
+                const precio = parseFloat(precioVentaInput?.value) || 0;
+                if(labelElement) calcularMargen(costo, precio, labelElement);
+            });
+        }
+
+        formPrincipal.addEventListener('input', (e) => {
+            if(e.target.id === 'global-precio-costo') {
+                refreshAllMarginLabels();
+            }
+            if(e.target.classList.contains('variant-price-input')) {
+                const row = e.target.closest('tr');
+                const labelElement = row.querySelector('[data-margin-label]'); // SOLUCIÓN 
+                const costo = parseFloat(costInput.value) || 0;
+                const precio = parseFloat(e.target.value) || 0;
+                if(labelElement) calcularMargen(costo, precio, labelElement);
+            }
+        });
+
+        const sizeMapping = {
+            tops: {S: 96, M: 102, L: 108, XL: 114},
+            bottoms: {S: 76, M: 82, L: 88, XL: 94}
+        };
+        const topsCategories = ['Polos', 'Camisas', 'Casacas/Abrigos', 'Suéteres', 'Conjuntos', 'Ropa Deportiva'];
+        const bottomsCategories = ['Pantalones', 'Shorts'];
+
+        function getCategoryGroup() {
+            const selectedText = categorySelector?.selectedOptions?.[0]?.text || '';
+            if (topsCategories.includes(selectedText)) return 'tops';
+            if (bottomsCategories.includes(selectedText)) return 'bottoms';
+            return null;
+        }
+
+        function tryAutofillContorno(row) {
+            const tallaInput = row.querySelector('[name*=".talla"]');
+            const contornoInput = row.querySelector('[name*=".medidaCm"]');
+            if (!tallaInput || !contornoInput) return;
+            const size = tallaInput.value.trim().toUpperCase();
+            if (!size) return;
+            const group = getCategoryGroup();
+            const mapping = group ? sizeMapping[group] : null;
+            const value = mapping?.[size];
+            if (!value) return;
+            if (contornoInput.dataset.autoFilled !== 'false' && !contornoInput.value) {
+                contornoInput.value = value;
+                contornoInput.dataset.autoFilled = 'true';
+            }
+        }
+
+        function refreshVariantNames() {
+            variantBody?.querySelectorAll('tr.variant-row').forEach((row, index) => {
+                row.querySelectorAll('[data-name]').forEach(element => {
+                    element.name = element.dataset.name.replace('__index__', index);
+                });
+            });
+        }
+
+        function createVariantRow(talla = '', color = '') {
+            const template = document.querySelector('#variant-row-template');
+            const clone = template.content.cloneNode(true);
+            const row = clone.querySelector('tr');
+            
+            if (talla) row.querySelector('[data-name$=".talla"]').value = talla;
+            if (color) row.querySelector('[data-name$=".color"]').value = color;
+            
+            variantBody.appendChild(row);
+            tryAutofillContorno(row);
+            return row;
+        }
+
+        variantBody.addEventListener('click', (e) => {
+            if(e.target.closest('.remove-variant-row')) {
+                const row = e.target.closest('tr');
+                const rows = variantBody.querySelectorAll('tr.variant-row');
+                if (rows.length <= 1) {
+                    alert("El producto debe tener al menos una variante.");
+                    return;
+                }
+                row.remove();
+                refreshVariantNames();
+            }
+        });
+
+        addVariantButton?.addEventListener('click', () => {
+            createVariantRow();
+            refreshVariantNames();
+            refreshAllMarginLabels();
+        });
+
+        btnGenerarMasivo?.addEventListener('click', () => {
+            const tallasStr = document.querySelector('#mass-tallas').value.trim();
+            const coloresStr = document.querySelector('#mass-colores').value.trim();
+            
+            if(!tallasStr || !coloresStr) {
+                alert("Debes ingresar al menos una talla y un color para generar combinaciones.");
+                return;
+            }
+
+            const tallas = tallasStr.split(',').map(s => s.trim().toUpperCase()).filter(s => s);
+            const colores = coloresStr.split(',').map(s => s.trim()).filter(s => s);
+            
+            const existingRows = variantBody.querySelectorAll('tr.variant-row');
+            if(existingRows.length === 1) {
+                const firstTalla = existingRows[0].querySelector('[name*=".talla"]').value;
+                const firstColor = existingRows[0].querySelector('[name*=".color"]').value;
+                if(!firstTalla && !firstColor) existingRows[0].remove();
+            }
+
+            tallas.forEach(t => {
+                colores.forEach(c => createVariantRow(t, c));
+            });
+
+            refreshVariantNames();
+            refreshAllMarginLabels();
+            
+            document.querySelector('#mass-tallas').value = '';
+            document.querySelector('#mass-colores').value = '';
+        });
+
+        categorySelector?.addEventListener('change', () => {
+            variantBody.querySelectorAll('tr.variant-row').forEach(tryAutofillContorno);
+        });
+
+        setTimeout(() => refreshAllMarginLabels(), 100);
+    })();
+</script>
+
+<div th:fragment="producto-fotos-wrap" id="producto-fotos-wrap">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h6 class="fw-bold mb-0">Galería del Producto (<span th:text="${fotosCount}">0</span>/5)</h6>
+        <div th:if="${fotosCount >= 5}" class="badge bg-danger">Límite Máximo Alcanzado</div>
+    </div>
+
+    <form th:if="${fotosCount < 5}"
+          th:attr="hx-post=@{/dashboard/productos/fotos/upload}"
+          hx-target="#producto-fotos-wrap"
+          hx-swap="outerHTML"
+          enctype="multipart/form-data"
+          hx-encoding="multipart/form-data"
+          id="upload-form">
+          
+        <input type="hidden" name="idProducto" th:value="${productoId}">
+        
+        <div class="upload-drop-zone border border-2 border-primary border-opacity-25 rounded-3 p-4 text-center bg-light cursor-pointer mb-3" 
+             style="border-style: dashed !important; transition: all 0.3s;"
+             id="drop-zone" 
+             onclick="document.getElementById('file-input').click()">
+            <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-2 opacity-75"></i>
+            <h6 class="fw-bold text-dark mb-1">Arrastra tu imagen aquí o haz clic para explorar</h6>
+            <p class="small text-muted mb-0">Permitido: JPG, PNG, WEBP. <strong class="text-danger">(Max 14MB)</strong></p>
+            
+            <input type="file" id="file-input" name="archivo" accept=".jpg,.jpeg,.png,.webp" class="d-none" required
+                   onchange="if(this.files.length > 0) document.getElementById('upload-form').dispatchEvent(new Event('submit', {cancelable: true, bubbles: true}))">
+        </div>
+        <div class="text-danger small mt-2 fw-bold text-center" th:if="${error}" th:text="${error}"></div>
+    </form>
+    
+    <script>
+        (function() {
+            const dropZone = document.getElementById('drop-zone');
+            if(dropZone) {
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    dropZone.addEventListener(eventName, (e) => {
+                        e.preventDefault(); dropZone.classList.add('bg-primary', 'bg-opacity-10');
+                    });
+                });
+                ['dragleave', 'drop'].forEach(eventName => {
+                    dropZone.addEventListener(eventName, (e) => {
+                        e.preventDefault(); dropZone.classList.remove('bg-primary', 'bg-opacity-10');
+                    });
+                });
+                dropZone.addEventListener('drop', (e) => {
+                    const dt = e.dataTransfer;
+                    const files = dt.files;
+                    if(files.length > 0) {
+                        document.getElementById('file-input').files = files;
+                        htmx.trigger('#upload-form', 'submit');
+                    }
+                });
+            }
+        })();
+    </script>
+
+    <div class="row g-3 mt-1">
+        <div class="col-md-4 col-sm-6" th:each="f : ${fotos}">
+            <div class="card shadow-sm border-0 h-100 rounded-3 overflow-hidden">
+                
+                <div class="position-relative bg-light text-center" style="height: 200px;">
+                    <!-- LA IMAGEN SE CARGA DESDE EL NUEVO PUENTE NATIVO -->
+                    <img class="img-fluid h-100 w-100 p-2" th:src="@{'/uploads/productos/' + ${f.url_foto}}" alt="foto" style="object-fit: contain;">
+                    <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-2 shadow-sm" th:if="${f.esPortada}">
+                        <i class="fas fa-star text-dark"></i> Portada Principal
+                    </span>
+                </div>
+                
+                <div class="card-body p-2 d-flex gap-1 justify-content-between bg-white border-top">
+                    <button class="btn btn-sm btn-outline-warning text-dark fw-bold w-100 me-1"
+                            th:if="${!f.esPortada}"
+                            th:attr="hx-post=@{/dashboard/productos/fotos/portada(idFoto=${f.id_foto})}"
+                            hx-target="#producto-fotos-wrap" hx-swap="outerHTML">
+                        Fijar Portada
+                    </button>
+
+                    <button class="btn btn-sm btn-outline-danger px-3 w-100"
+                            th:if="${f.esPortada}" disabled>
+                        En uso
+                    </button>
+
+                    <button class="btn btn-sm btn-danger px-3"
+                            th:attr="hx-post=@{/dashboard/productos/fotos/delete(idFoto=${f.id_foto})}"
+                            hx-target="#producto-fotos-wrap" hx-swap="outerHTML"
+                            hx-confirm="¿Seguro que deseas eliminar esta fotografía?">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="exito">
+    <div class="alert alert-success fw-bold text-center border-0 shadow-sm m-0 rounded-3 p-4">
+        <i class="fas fa-check-circle fa-2x mb-2"></i><br>
+        ¡Excelente! El producto y sus variantes se guardaron correctamente.
+    </div>
+    <script>
+        setTimeout(() => {
+            document.querySelector('#producto-modal-wrap')?.replaceChildren();
+            document.querySelector('.modal-backdrop')?.remove();
+            htmx.ajax('GET', '/dashboard/productos?action=list', {target:'#productos-table-wrap', swap:'outerHTML'});
+        }, 1500);
+    </script>
+</div>
+
+</body>
+</html>

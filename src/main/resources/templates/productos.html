@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Productos - Zippers Perú</title>
+</head>
+<body>
+
+<div th:replace="~{layout/sidebar :: sidebar}"></div>
+<nav th:replace="~{layout/navbar :: navbar}"></nav>
+
+<div th:fragment="main-content" id="main-content" class="main-content p-4" style="margin-left: 250px; overflow-x: hidden;">
+
+    <div class="d-flex justify-content-between align-items-center mb-4 bg-white p-4 rounded-3 shadow-sm">
+        <div>
+            <h3 class="fw-bold mb-0 text-dark"><i class="fas fa-tshirt me-2 text-primary"></i> Gestión de Productos</h3>
+            <p class="text-muted mb-0 mt-1">Administra el inventario y catálogo de Zippers Perú</p>
+        </div>
+        <button type="button"
+                class="btn btn-primary px-4 py-2 fw-bold shadow-sm"
+                th:attr="hx-get=@{/dashboard/productos(action='form')}"
+                hx-target="#producto-modal-wrap"
+                hx-swap="innerHTML">
+            <i class="fas fa-plus-circle me-1"></i> Nuevo Producto
+        </button>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-header bg-white py-3 border-bottom-0">
+            <h5 class="m-0 fw-bold text-dark">Lista de Productos</h5>
+        </div>
+
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="text-muted fw-bold small">Mostrar</span>
+                    <select class="form-select form-select-sm" style="width: 80px;" name="size"
+                            th:attr="hx-get=@{/dashboard/productos(action='list')}"
+                            hx-target="#productos-table-wrap"
+                            hx-swap="outerHTML"
+                            hx-include="[name='buscar'],[name='sort'],[name='dir']"
+                            hx-vals='{"page":0}'>
+                        <option th:selected="${size == 10}" value="10">10</option>
+                        <option th:selected="${size == 25}" value="25">25</option>
+                        <option th:selected="${size == 50}" value="50">50</option>
+                    </select>
+                    <span class="text-muted fw-bold small">registros</span>
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                    <span class="text-muted fw-bold small">Buscar:</span>
+                    <input class="form-control form-control-sm" style="width: 250px;" type="search" name="buscar" th:value="${buscar}"
+                           placeholder="Ej: Polo, código..."
+                           th:attr="hx-get=@{/dashboard/productos(action='list')}"
+                           hx-trigger="keyup changed delay:500ms, search"
+                           hx-target="#productos-table-wrap"
+                           hx-swap="outerHTML"
+                           hx-include="[name='size'],[name='sort'],[name='dir']"
+                           hx-vals='{"page":0}'/>
+
+                    <input type="hidden" name="sort" th:value="${sort}">
+                    <input type="hidden" name="dir" th:value="${dir}">
+                </div>
+            </div>
+
+            <div id="productos-table-wrap" th:replace="~{productos-table :: tabla-productos}"></div>
+
+        </div>
+    </div>
+
+    <div id="producto-modal-wrap"></div>
+
+</div>
+
+</body>
+</html>

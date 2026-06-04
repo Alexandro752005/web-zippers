@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="modal-edicion">
+    <div class="modal-header bg-primary text-white border-0">
+        <h5 class="modal-title fw-bold">
+            <i class="fas fa-layer-group me-2"></i> Gestión de Presentaciones: <span th:text="${producto.nombre}"></span>
+        </h5>
+        <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal"></button>
+    </div>
+    
+    <div class="modal-body bg-light p-4">
+        
+        <ul class="nav nav-tabs border-bottom pb-1 mb-3" id="editTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active fw-bold text-dark border-0" data-bs-toggle="tab" data-bs-target="#stock" type="button" role="tab">
+                    <i class="fas fa-th-list me-1"></i> Stock por Variante
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link fw-bold text-dark border-0" data-bs-toggle="tab" data-bs-target="#historial" type="button" role="tab">
+                    <i class="fas fa-history me-1"></i> Últimas Ventas
+                </button>
+            </li>
+        </ul>
+        
+        <div class="tab-content bg-white p-4 rounded shadow-sm border">
+            
+            <div class="tab-pane fade show active" id="stock" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle border">
+                        <thead class="table-light text-secondary small">
+                            <tr>
+                                <th>TALLA</th>
+                                <th>COLOR</th>
+                                <th class="text-end">PRECIO COSTO</th>
+                                <th class="text-end">PRECIO VENTA</th>
+                                <th class="text-center">MARGEN</th>
+                                <th class="text-center" style="width: 150px;">STOCK ACTUAL</th>
+                                <th class="text-center">ACCIÓN</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="v : ${producto.variantes}">
+                                <td class="fw-bold text-dark" th:text="${v.talla}"></td>
+                                <td th:text="${v.color}"></td>
+                                <td class="text-end text-muted" th:text="${'S/ ' + #numbers.formatDecimal(v.precioCosto, 1, 'COMMA', 2, 'POINT')}"></td>
+                                <td class="text-end fw-bold text-success" th:text="${'S/ ' + #numbers.formatDecimal(v.precioVenta, 1, 'COMMA', 2, 'POINT')}"></td>
+                                
+                                <td class="text-center">
+                                    <span class="badge bg-info text-dark" 
+                                          th:if="${v.precioVenta > 0}"
+                                          th:text="${#numbers.formatDecimal(((v.precioVenta - v.precioCosto) / v.precioVenta) * 100, 1, 1)} + '%'"></span>
+                                </td>
+                                
+                                <td>
+                                    <div class="input-group input-group-sm">
+                                        <input type="hidden" name="idVariante" th:value="${v.id_variante}" />
+                                        <input type="number" name="nuevoStock" class="form-control text-center fw-bold stock-input" 
+                                               th:value="${v.stockActual}" min="0">
+                                    </div>
+                                </td>
+                                
+                                <td class="text-center">
+                                    <button class="btn btn-sm btn-success fw-bold"
+                                            hx-post="@{/dashboard/inventario/actualizar-stock}"
+                                            hx-include="closest tr"
+                                            hx-swap="innerHTML"
+                                            onclick="let btn = this; setTimeout(()=> btn.innerHTML = 'Actualizar', 2000);">
+                                        Actualizar
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="tab-pane fade" id="historial" role="tabpanel">
+                <div th:if="${#lists.isEmpty(historial)}" class="text-center py-5 text-muted">
+                    <i class="fas fa-receipt fa-2x mb-3 opacity-50"></i>
+                    <p>No hay ventas registradas para este producto aún.</p>
+                </div>
+                
+                <div class="list-group" th:unless="${#lists.isEmpty(historial)}">
+                    <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" th:each="venta : ${historial}">
+                        <div>
+                            <h6 class="mb-1 fw-bold text-dark">
+                                <i class="fas fa-user-circle text-primary me-1"></i> 
+                                <span th:text="${venta[5] != null ? venta[5] : 'Cliente General'}"></span>
+                            </h6>
+                            <small class="text-muted">
+                                <span class="badge bg-light text-dark border me-1" th:text="${venta[2]}">Talla</span>
+                                <span class="badge bg-light text-dark border me-2" th:text="${venta[3]}">Color</span>
+                                <i class="fas fa-shopping-bag me-1"></i> <span th:text="${venta[0]} + ' unidad(es)'"></span>
+                            </small>
+                        </div>
+                        <div class="text-end">
+                            <h6 class="mb-1 fw-bold text-success" th:text="${'S/ ' + #numbers.formatDecimal(venta[1], 1, 'COMMA', 2, 'POINT')}">S/ 0.00</h6>
+                            <small class="text-muted"><i class="far fa-calendar-alt me-1"></i> <span th:text="${#temporals.format(venta[4], 'dd/MM/yyyy HH:mm')}"></span></small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <div class="modal-footer bg-light border-0">
+        <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal" 
+                hx-get="/dashboard/inventario/tabla" hx-target="#wrap-inventario" hx-swap="outerHTML">
+            Cerrar y Refrescar Inventario
+        </button>
+    </div>
+</div>
+
+</body>
+</html>

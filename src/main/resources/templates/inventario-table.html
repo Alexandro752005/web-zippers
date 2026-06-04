@@ -1,0 +1,44 @@
+<div th:fragment="inventario-table">
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="thead-light">
+                <tr><th>ID</th><th>Producto</th><th>Stock General</th><th>Stock Mínimo</th><th>Estado</th><th>Valor Total</th><th>Acciones</th></tr>
+            </thead>
+            <tbody>
+                <tr th:each="p : ${productos}">
+                    <td th:text="${p.id}"></td>
+                    <td th:text="${p.nombre}"></td>
+                    <td th:text="${p.stockGeneral}"></td>
+                    <td th:text="${p.stockMinimo}"></td>
+                    <td>
+                        <span th:class="${p.estado == 'ÓPTIMO'} ? 'badge bg-success' : 'badge bg-danger'"
+                              th:text="${p.estado}"></span>
+                    </td>
+                    <td th:text="'S/ ' + ${#numbers.formatDecimal(p.valorTotal, 0, 'COMMA')}"></td>
+                    <td>
+                        <button class="btn btn-sm btn-primary"
+                                th:attr="hx-get=@{/dashboard/inventario/editar/{id}(id=${p.id})}"
+                                hx-target="#modal-content-inventario" hx-swap="innerHTML"
+                                data-bs-toggle="modal" data-bs-target="#modal-inventario">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-info"
+                                th:attr="hx-post=@{/dashboard/inventario/ocultar/{id}(id=${p.id})}"
+                                hx-confirm="¿Ocultar producto? No se eliminará, solo dejará de aparecer en el inventario."
+                                hx-target="#inventarioTabla">
+                            <i class="fas fa-eye-slash"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- Reutilizamos el modal base definido en inventario.html: #modal-inventario -->
+    <div th:remove="all"> <!-- Placeholder removed when fragment used inside full view -->
+        <div class="modal fade" id="editarModal" tabindex="-1">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content" id="modalContainer"></div>
+            </div>
+        </div>
+    </div>
+</div>

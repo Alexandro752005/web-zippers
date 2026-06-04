@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+    <div th:fragment="form-perfil">
+        <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title fw-bold" th:text="${rol.id_rol == null} ? 'Registrar Nuevo Perfil' : 'Editar Perfil'"></h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        
+        <form th:object="${rol}" hx-post="/dashboard/perfiles/guardar" hx-target="#modal-content-perfil" hx-swap="innerHTML">
+            <input type="hidden" th:field="*{id_rol}">
+            
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Nombre del Perfil</label>
+                    <input type="text" class="form-control" th:field="*{nombre}" required placeholder="Ej: ADMINISTRADOR">
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Descripción</label>
+                    <textarea class="form-control" th:field="*{descripcion}" rows="3" placeholder="Descripción breve del perfil"></textarea>
+                </div>
+                
+                <div class="mb-3 border-top pt-3 mt-4" th:if="${rol.id_rol != null}">
+                    <label class="form-label fw-bold">Estado del Perfil</label>
+                    <select class="form-select" th:field="*{estado}" 
+                            th:disabled="${rol.id_rol == 1}"
+                            th:classappend="${rol.id_rol == 1} ? 'bg-light'">
+                        <option value="ACTIVO">ACTIVO (Habilitado en el sistema)</option>
+                        <option value="INACTIVO">INACTIVO (No disponible para uso)</option>
+                    </select>
+                    <div class="form-text text-danger" th:if="${rol.id_rol == 1}">
+                        <i class="fas fa-shield-alt me-1"></i> El Perfil Administrador Base no puede ser desactivado.
+                    </div>
+                    <input type="hidden" th:if="${rol.id_rol == 1}" name="estado" value="ACTIVO">
+                </div>
+            </div>
+            
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-success fw-bold">
+                    <span class="htmx-indicator-label">Guardar Cambios</span>
+                    <span class="spinner-border spinner-border-sm htmx-indicator" role="status" aria-hidden="true"></span>
+                </button>
+            </div>
+            
+            <style>
+                .htmx-indicator { display: none; }
+                .htmx-request .htmx-indicator { display: inline-block; }
+                .htmx-request .htmx-indicator-label { display: none; }
+            </style>
+        </form>
+    </div>
+
+    <div th:fragment="form-permisos">
+        <div class="modal-header bg-info text-white">
+            <h5 class="modal-title fw-bold">Gestionar Permisos: <span th:text="${rol.nombre}"></span></h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        
+        <form hx-post="/dashboard/perfiles/permisos/guardar" hx-target="#modal-content-perfil" hx-swap="innerHTML">
+            <input type="hidden" name="id_rol" th:value="${rol.id_rol}">
+            
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered table-hover align-middle">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>Módulo</th>
+                                <th class="text-center">Crear</th>
+                                <th class="text-center">Leer</th>
+                                <th class="text-center">Editar</th>
+                                <th class="text-center">Eliminar</th>
+                                <th class="text-center">Exportar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="opcion : ${opciones}">
+                                <td th:text="${opcion.nombre}" class="fw-bold text-secondary"></td>
+                                <td class="text-center">
+                                    <input type="checkbox" class="form-check-input border-secondary" th:name="'checkbox_crear_' + ${opcion.id_opcion}" th:checked="${permisoMap.containsKey(opcion.id_opcion) ? permisoMap.get(opcion.id_opcion).permiso_crear : false}">
+                                </td>
+                                <td class="text-center">
+                                    <input type="checkbox" class="form-check-input border-secondary" th:name="'checkbox_leer_' + ${opcion.id_opcion}" th:checked="${permisoMap.containsKey(opcion.id_opcion) ? permisoMap.get(opcion.id_opcion).permiso_leer : false}">
+                                </td>
+                                <td class="text-center">
+                                    <input type="checkbox" class="form-check-input border-secondary" th:name="'checkbox_editar_' + ${opcion.id_opcion}" th:checked="${permisoMap.containsKey(opcion.id_opcion) ? permisoMap.get(opcion.id_opcion).permiso_editar : false}">
+                                </td>
+                                <td class="text-center">
+                                    <input type="checkbox" class="form-check-input border-secondary" th:name="'checkbox_eliminar_' + ${opcion.id_opcion}" th:checked="${permisoMap.containsKey(opcion.id_opcion) ? permisoMap.get(opcion.id_opcion).permiso_eliminar : false}">
+                                </td>
+                                <td class="text-center">
+                                    <input type="checkbox" class="form-check-input border-secondary" th:name="'checkbox_exportar_' + ${opcion.id_opcion}" th:checked="${permisoMap.containsKey(opcion.id_opcion) ? permisoMap.get(opcion.id_opcion).permiso_exportar : false}">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-success fw-bold">
+                    <span class="htmx-indicator-label">Guardar Permisos</span>
+                    <span class="spinner-border spinner-border-sm htmx-indicator" role="status" aria-hidden="true"></span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div th:fragment="exito">
+        <script>
+            // 1. Ocultar modal actual
+            var modalEl = document.getElementById('modal-perfil');
+            if (modalEl) {
+                var modal = bootstrap.Modal.getInstance(modalEl);
+                if (modal) modal.hide();
+            }
+            
+            // 2. Mostrar Alerta de éxito
+            var alerta = document.getElementById('alerta-exito-perfil');
+            if (alerta) {
+                alerta.classList.remove('d-none');
+                setTimeout(() => alerta.classList.add('d-none'), 3000);
+            }
+            
+            // 3. Recargar la tabla de Perfiles mediante HTMX (SPA)
+            htmx.ajax('GET', '/dashboard/perfiles/tabla', {target: '#tabla-perfiles', swap: 'outerHTML'});
+        </script>
+    </div>
+
+</body>
+</html>

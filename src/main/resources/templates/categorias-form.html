@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+    <div th:fragment="form-categoria">
+        <div class="modal-header bg-primary border-0">
+            <h5 class="modal-title fw-bold text-white" th:text="${categoria.id_categoria == null} ? 'Nueva Categoría' : 'Editar Categoría'"></h5>
+            <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        
+        <form th:object="${categoria}" 
+              th:attr="hx-post=@{/dashboard/categorias(action='save')}" 
+              hx-target="#modal-content-categoria" 
+              hx-swap="innerHTML"
+              class="needs-validation">
+            
+            <input type="hidden" th:field="*{id_categoria}">
+            
+            <div class="modal-body p-4">
+                <div class="mb-4">
+                    <label class="form-label fw-semibold text-secondary">Nombre de la Categoría <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control form-control-lg fs-6" th:field="*{nombre}" 
+                           th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid'" 
+                           placeholder="Ej: Conjuntos" required autofocus>
+                    <div class="invalid-feedback fw-semibold" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label fw-semibold text-secondary">Descripción</label>
+                    <textarea class="form-control" th:field="*{descripcion}" rows="3" 
+                              placeholder="Describe brevemente esta categoría..."></textarea>
+                </div>
+                
+                <div class="mb-2" th:if="${categoria.id_categoria != null}">
+                    <label class="form-label fw-semibold text-secondary">Estado del Registro</label>
+                    <div class="form-check form-switch fs-5">
+                        <input class="form-check-input cursor-pointer" type="checkbox" role="switch" id="estadoSwitch" 
+                               name="estado" value="ACTIVO" th:checked="${categoria.estado == 'ACTIVO'}">
+                        <label class="form-check-label fs-6 ms-2" for="estadoSwitch" 
+                               th:text="${categoria.estado == 'ACTIVO' ? 'Categoría Activa' : 'Categoría Inactiva'}"></label>
+                    </div>
+                    <input type="hidden" name="estado" value="INACTIVO" th:if="${categoria.estado != 'ACTIVO'}">
+                </div>
+            </div>
+            
+            <div class="modal-footer bg-light border-0">
+                <button type="button" class="btn btn-link text-secondary fw-bold text-decoration-none" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary px-4 fw-bold shadow-sm d-flex align-items-center">
+                    <span class="htmx-indicator-label">Guardar Categoría</span>
+                    <span class="spinner-border spinner-border-sm htmx-indicator ms-2" role="status" aria-hidden="true"></span>
+                </button>
+            </div>
+            
+            <style>
+                .htmx-indicator { display: none; }
+                .htmx-request .htmx-indicator { display: block; }
+            </style>
+        </form>
+    </div>
+
+    <div th:fragment="exito">
+        <script>
+            // Disparamos evento al JS global
+            document.body.dispatchEvent(new CustomEvent("categoriaGuardada", {
+                detail: { mensaje: "¡Categoría guardada exitosamente!" }
+            }));
+            
+            // CORRECCIÓN APLICADA: Forzamos el refresco apuntando a #categorias-table-wrap
+            htmx.ajax('GET', '/dashboard/categorias?action=list', {target: '#categorias-table-wrap', swap: 'outerHTML'});
+        </script>
+    </div>
+
+</body>
+</html>

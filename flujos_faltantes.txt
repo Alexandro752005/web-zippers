@@ -1,0 +1,83 @@
+
+Flujos del proyecto zippers
+
+
+Módulo Usuarios:
+
+flujo 1: se permite registrar empleado de acuerdo al flujo elaborado, todo el proceso reside en el módulo de USUARIOS.= HECHO
+
+flujo 2: el apartado de login se completa perfectamente según el flujo elaborado. = HECHO
+
+
+Módulo Sitio Web:
+
+flujo 3: registro usuario: PENDIENTE
+
+flujo 4: login usuario: PENDIENTE
+
+
+Módulo Venta:
+
+flujo 5: Venta Integral : PENDIENTE
+
+flujo 6: Venta en Local: PENDIENTE
+
+
+Módulo Cotización:
+
+flujo 7: Cotización en Sitio Web: PENDIENTE
+
+
+Módulo Promociones:
+
+flujo 8: Descuento por campaña: PENDIENTE
+
+
+Módulo Inventario:
+
+flujo 9: reporte por stock mínimo: PENDIENTE
+
+
+Módulo Despacho:
+
+flujo 10: Despacho de producto: PENDIENTE
+
+Módulo Promociones:
+
+flujo: Descuento por campaña
+
+flujo: Auditoría de roles y permisos, cuando un usuario registrado quiere realizar 
+un descuento masivo el sistema emite una alerta de que no se le permite tal acción, además que exista un pequeño apartado que indique la fecha de modificación y usuario que lo realizó: PENDIENTE
+
+
+Módulo Categoría:
+
+flujo 12: Lanzamiento de nueva colección o categoría 
+
+
+Módulo Cotización:
+
+flujo 13: Expiración de cotización: PENDIENTE
+
+
+Módulo Promociones(catálogo web): 
+
+flujo 14: Proceso de fidelización: PENDIENTE
+
+
+
+
+Módulos pendientes:
+
+Módulo Temporadas y descuentos
+Módulo Clientes
+Módulo Ventas
+Módulo Recojo
+Módulo Cotizaciones
+Módulo Gestión Tienda
+Módulo Presentaciones
+Módulo Sitio Web
+
+
+
+

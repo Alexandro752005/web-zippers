@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Zippers Perú</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-light">
+
+    <div th:replace="~{layout/sidebar :: sidebar}"></div>
+    <nav th:replace="~{layout/navbar :: navbar}"></nav>
+
+    <div id="main-content" class="main-content p-4" style="margin-left: 250px; overflow-x: hidden;"
+         hx-get="/dashboard/resumen" 
+         hx-trigger="load" 
+         hx-swap="outerHTML">
+        
+        <div class="d-flex justify-content-center align-items-center" style="height: 70vh;">
+            <div class="text-center text-muted">
+                <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;" role="status"></div>
+                <h5 class="fw-bold">Cargando Panel de Control...</h5>
+                <p class="small">Calculando estadísticas y métricas</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
+        <div id="toast-exito" class="toast align-items-center text-bg-success border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-check-circle me-2"></i> <span id="toast-mensaje">Cambios realizados</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Función global para mostrar toast
+        function mostrarToast(mensaje) {
+            document.getElementById('toast-mensaje').textContent = mensaje;
+            var toastEl = document.getElementById('toast-exito');
+            var toast = bootstrap.Toast.getOrCreateInstance(toastEl);
+            toast.show();
+        }
+
+        // Manejador global para el modal de usuario y respuesta exitosa
+        document.body.addEventListener('htmx:afterSwap', function(evt) {
+            if (evt.detail.target.id === 'modal-content-usuario') {
+                // Si la respuesta contiene el indicador de éxito
+                if (evt.detail.target.querySelector('#exito-usuario')) {
+                    // Cerrar modal
+                    var modalEl = document.getElementById('modal-usuario');
+                    if (modalEl) {
+                        var modal = bootstrap.Modal.getInstance(modalEl);
+                        if (modal) modal.hide();
+                    }
+                    // Mostrar toast
+                    mostrarToast('Cambios realizados');
+                    // Refrescar tabla
+                    htmx.ajax('GET', '/dashboard/usuarios/tabla?page=0&buscar=', {target: '#tabla-usuarios', swap: 'outerHTML'});
+                } 
+                // Si la respuesta contiene un formulario, es el fragmento del modal de creación/edición
+                else if (evt.detail.target.querySelector('form')) {
+                    var modalEl = document.getElementById('modal-usuario');
+                    if (modalEl) {
+                        var modalInstance = bootstrap.Modal.getInstance(modalEl);
+                        if (!modalInstance) {
+                            modalInstance = new bootstrap.Modal(modalEl);
+                        }
+                        modalInstance.show();
+                    }
+                }
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

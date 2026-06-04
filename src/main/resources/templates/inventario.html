@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+<div th:fragment="main-content" id="main-content" class="main-content p-4" style="margin-left: 250px; overflow-x: hidden;">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-0 text-dark"><i class="fas fa-boxes me-2 text-primary"></i> Control de Inventario</h3>
+            <p class="text-muted mb-0 mt-1 small">Gestión de stock, presentaciones y valorización</p>
+        </div>
+        <button class="btn btn-outline-primary shadow-sm fw-bold" 
+                hx-get="/dashboard/inventario/tabla" 
+                hx-target="#wrap-inventario" 
+                hx-swap="outerHTML"
+                hx-indicator="#loading-inventario">
+            <i class="fas fa-sync-alt me-1"></i> Refrescar
+        </button>
+    </div>
+
+    <div id="wrap-inventario" th:fragment="inventario-contenido">
+        
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm border-start border-primary border-4 h-100">
+                    <div class="card-body py-3">
+                        <div class="text-muted small fw-bold text-uppercase mb-1">Total Productos</div>
+                        <h3 class="fw-bold text-dark mb-0" th:text="${totalProductos}">0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm border-start border-danger border-4 h-100">
+                    <div class="card-body py-3">
+                        <div class="text-muted small fw-bold text-uppercase mb-1">Stock Crítico</div>
+                        <h3 class="fw-bold text-danger mb-0" th:text="${stockCritico}">0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm border-start border-success border-4 h-100">
+                    <div class="card-body py-3">
+                        <div class="text-muted small fw-bold text-uppercase mb-1">Stock Óptimo</div>
+                        <h3 class="fw-bold text-success mb-0" th:text="${stockOptimo}">0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm border-start border-warning border-4 h-100">
+                    <div class="card-body py-3">
+                        <div class="text-muted small fw-bold text-uppercase mb-1">Valor Inventario</div>
+                        <h3 class="fw-bold text-dark mb-0" th:text="${'S/ ' + #numbers.formatDecimal(valorTotal, 1, 'COMMA', 2, 'POINT')}">S/ 0.00</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="loading-inventario" class="htmx-indicator text-center py-3">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="text-muted mt-2">Sincronizando inventario...</p>
+        </div>
+
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h6 class="m-0 fw-bold text-dark">Detalle de Existencias Activas</h6>
+                <div class="input-group input-group-sm" style="width: 250px;">
+                    <span class="input-group-text bg-light border-end-0"><i class="fas fa-search text-muted"></i></span>
+                    <input type="text" id="buscador-inventario" class="form-control border-start-0 bg-light" placeholder="Buscar producto...">
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle border-bottom m-0" id="tabla-inventario">
+                        <thead class="table-light text-secondary">
+                            <tr>
+                                <th class="py-3 px-3">ID</th>
+                                <th class="py-3 px-3">PRODUCTO</th>
+                                <th class="py-3 px-3 text-center">STOCK GRAL</th>
+                                <th class="py-3 px-3 text-center">STOCK MÍNIMO</th>
+                                <th class="py-3 px-3 text-center">ESTADO</th>
+                                <th class="py-3 px-3 text-end">VALOR TOTAL</th>
+                                <th class="py-3 px-3 text-center">ACCIONES</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="p : ${productos}" class="fila-producto">
+                                <td class="px-3 fw-bold text-secondary" th:text="${'#' + p.id}"></td>
+                                <td class="px-3 fw-bold text-dark nombre-prod" th:text="${p.nombre}"></td>
+                                <td class="px-3 text-center fw-bold" th:text="${p.stockGeneral}"></td>
+                                <td class="px-3 text-center text-muted" th:text="${p.stockMinimo}"></td>
+                                <td class="px-3 text-center">
+                                    <span class="badge rounded-pill px-3 py-2" 
+                                          th:classappend="${p.estado == 'ÓPTIMO'} ? 'bg-success' : 'bg-danger'"
+                                          th:text="${p.estado}"></span>
+                                </td>
+                                <td class="px-3 text-end fw-bold text-secondary" th:text="${'S/ ' + #numbers.formatDecimal(p.valorTotal, 1, 'COMMA', 2, 'POINT')}"></td>
+                                <td class="px-3 text-center">
+                                    <button class="btn btn-sm btn-outline-primary rounded-2 shadow-sm me-1"
+                                            hx-get="" th:attr="hx-get=@{/dashboard/inventario/editar/{id}(id=${p.id})}"
+                                            hx-target="#modal-content-inventario" hx-swap="innerHTML"
+                                            title="Editar Stock y Variantes" data-bs-toggle="modal" data-bs-target="#modal-inventario">
+                                        <i class="fas fa-boxes"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary rounded-2 shadow-sm"
+                                            th:attr="hx-post=@{/dashboard/inventario/ocultar/{id}(id=${p.id})}"
+                                            hx-target="#wrap-inventario" hx-swap="outerHTML"
+                                            hx-confirm="¿Ocultar este producto del inventario? Cambiará su estado a INACTIVO."
+                                            title="Ocultar Producto">
+                                        <i class="fas fa-eye-slash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+            document.getElementById('buscador-inventario')?.addEventListener('keyup', function() {
+                let text = this.value.toLowerCase();
+                document.querySelectorAll('.fila-producto').forEach(row => {
+                    let nombre = row.querySelector('.nombre-prod').textContent.toLowerCase();
+                    row.style.display = nombre.includes(text) ? '' : 'none';
+                });
+            });
+        </script>
+        
+    </div>
+
+    <div class="modal fade" id="modal-inventario" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" id="modal-content-inventario">
+                </div>
+        </div>
+    </div>
+
+    <script>
+        document.body.addEventListener('htmx:afterSwap', function(evt) {
+            if (evt.detail.target.id === 'modal-content-inventario') {
+                var modalEl = document.getElementById('modal-inventario');
+                if (modalEl) {
+                    var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                    modal.show();
+                }
+            }
+        });
+    </script>
+
+</div>
+</body>
+</html>

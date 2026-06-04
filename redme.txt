@@ -1,0 +1,96 @@
+====================================================================
+               RESUMEN DE AVANCE – PROYECTO ZIPPERS PERÚ
+====================================================================
+
+DESCRIPCIÓN:
+Sistema automatizado de ventas retail enfocado en transformar 
+mercados y consolidar a ZIPPERS como una marca líder de estilo 
+de vida urbano. El sistema gestiona exclusivamente flujos de 
+productos terminados y logística rápida.
+
+ESTADO ACTUAL: Avance Fase 1 (Mockups y Seguridad Básica)
+ARQUITECTURA: SPA (Single Page Application) - Cero recargas de URL.
+DISEÑO UI: Dashboard administrativo con Sidebar lateral izquierdo.
+
+1. BASE DEL PROYECTO
+Stack: Spring Boot 3.5.14, Java 21, MySQL 8.0, Thymeleaf, Bootstrap 5, Lombok 1.18.38.
+Estructura: Paquete base com.zippers.sistema_ventas, con subpaquetes config, controller, entity, repository, service.
+Base de datos: bd_zippers con todas las tablas del modelo relacional.
+Credenciales de prueba: joel.davila@zippers.pe / admin123 (BCrypt)
+
+2. POLÍTICA DE SEGURIDAD – BLOQUEO POR 5 INTENTOS FALLIDOS ✅ TERMINADO
+Cambios en base de datos:
+Se agregaron columnas intentos_fallidos (INT) y bloqueado_hasta (DATETIME) a la tabla usuarios.
+Archivos modificados/creados:
+Usuario.java: nuevos campos intentos_fallidos, bloqueado_hasta.
+CustomUserDetailsService.java: verifica si bloqueado_hasta es futuro y lanza LockedException.
+CustomAuthenticationFailureHandler.java: incrementa intentos fallidos, bloquea a los 5 intentos.
+CustomAuthenticationSuccessHandler.java: resetea intentos y desbloquea al iniciar sesión correctamente.
+SecurityConfig.java: inyecta y configura los handlers de éxito/fallo.
+login.html: añadido mensaje de aviso "Cuenta bloqueada por 5 minutos..." con th:if="${param.bloqueado}".
+
+3. MÓDULO DE PERFILES – GESTIÓN DE ROLES Y PERMISOS 🚧 EN DESARROLLO
+Cambios en base de datos:
+Tablas opciones y permisos ya existentes y pobladas con los 11 módulos del sistema.
+Se requiere agregar columnas permiso_leer y permiso_exportar a permisos para el diseño de 5 checkboxes.
+Archivos creados/modificados:
+Entidades:
+Opcion.java: mapea la tabla opciones.
+Permiso.java: mapea la tabla permisos (clave compuesta con PermisoId).
+Pendiente: agregar campos permiso_leer y permiso_exportar.
+PermisoId.java: clase auxiliar para la clave compuesta.
+Rol.java: se agregó campo estado (ACTIVO/INACTIVO).
+Repositorios:
+OpcionRepository.java: básico (JpaRepository).
+PermisoRepository.java: métodos findByIdRol y deleteByIdRol con @Query (porque el campo id_rol no sigue camelCase).
+Controladores:
+PerfilController.java:
+GET /perfiles: lista roles (excluye CLIENTE).
+POST /perfiles/guardar: crea/edita rol.
+GET /perfiles/{id}/permisos: devuelve JSON con permisos actuales.
+POST /perfiles/{id}/permisos: guarda permisos vía AJAX (soporta crear/leer/editar/eliminar/exportar).
+POST /perfiles/{id}/toggle-estado: cambia estado ACTIVO/INACTIVO.
+Corrección importante: Se eliminó la ruta /perfiles duplicada en WebController.java.
+Vistas:
+perfiles.html: tabla con columnas Nombre, Descripción, Estado, Permisos (botón azul con ícono de llave), Acciones (editar).
+Pendiente: modal con 5 checkboxes por módulo (Crear, Leer, Actualizar, Eliminar, Exportar) como en la imagen de referencia.
+Seguridad:SecurityConfig.java: añadido @EnableMethodSecurity(prePostEnabled = true) y csrf.disable().
+PerfilController protegido con @PreAuthorize("hasRole('ADMIN')").
+
+4. ERRORES SOLUCIONADOS DURANTE EL DESARROLLO
+
+Lombok no generaba getters/setters: se actualizó a 1.18.38 y se configuró maven-compiler-plugin con annotationProcessorPaths.
+TypeTag UNKNOWN al compilar: se fijó la versión del compilador a 3.13.0.
+PermisoRepository no encontraba idRol: se escribieron consultas JPQL explícitas.
+Ruta /perfiles ambigua: se eliminó el método en WebController.
+403 Forbidden en AJAX: se deshabilitó CSRF para simplificar.
+Advertencias de nulabilidad: se añadieron comprobaciones if (p != null) y if (rol == null).
+Error setPermiso_leer / setPermiso_exportar undefined: se necesita actualizar Permiso.java con los nuevos campos (siguiente paso).
+
+5. PRÓXIMOS PASOS INMEDIATOS (según tus requerimientos)
+
+Actualizar Permiso.java con los campos permiso_leer y permiso_exportar.
+Ejecutar en MySQL el ALTER TABLE permisos ADD COLUMN ... para las nuevas columnas.
+Modificar perfiles.html para que el modal muestre los 5 checkboxes (Crear, Leer, Editar, Eliminar, Exportar) como en tu imagen de referencia.
+Probar la asignación de permisos al rol REPARTIDOR (solo Dashboard y Ventas).
+Implementar restricción dinámica del menú lateral según los permisos del rol autenticado (siguiente gran funcionalidad).
+
+REPARTIDOR🔑 Sobre las Contraseñas (Passwords)Por políticas de seguridad 
+estructural, el sistema no almacena las contraseñas en texto plano, sino que 
+utiliza el campo password_hash encriptado con BCrypt a través de Spring Security.
+Credencial de Pruebas: La contraseña temporal que se generó y hasheó recientemente 
+para validar los accesos iniciales de administración es: admin123.Si algún usuario 
+presenta errores de acceso (como ocurrió con los perfiles que no cargaban inicialmente), 
+la solución es utilizar tu usuario de ADMIN, hacer clic en el botón de edición del usuario 
+afectado, ingresar la nueva contraseña y guardar. El sistema la encriptará automáticamente, 
+permitiendo un login exitoso con su correo respectivo.
+--------------------------------------------------------------------
+⚙️ NOTAS TÉCNICAS PARA EL MÓDULO DE LOGIN
+--------------------------------------------------------------------
+- Endpoint de Autenticación: POST http://localhost:8080/api/auth/login
+- Si se falla la contraseña más de 3 veces, la cuenta se bloqueará 
+  por exactamente 15 minutos por políticas de seguridad.
+- El token JWT devuelto debe guardarse en el LocalStorage del 
+  navegador para mantener la sesión en la arquitectura SPA.
+
+====================================================================

@@ -1,0 +1,28 @@
+# Maven
+/target/
+.mvn/timing.propierties
+
+# Logs
+*.log
+
+logs/
+
+# IDE / Editor
+.vscode/
+.idea/
+*iml
+*.iml
+*.ipr
+*.iws
+out/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+uploads/*
+!uploads/.gitkeep
+
+.env
+application-local.properties
+application-local.yml

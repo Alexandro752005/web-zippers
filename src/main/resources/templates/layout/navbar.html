@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm py-3" style="margin-left: 250px;">
+        <div class="container-fluid">
+            <button class="btn btn-light me-3" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+            
+            <form class="d-flex w-50">
+                <div class="input-group">
+                    <input type="text" class="form-control bg-light border-0" placeholder="Realizar búsqueda..." aria-label="Search">
+                    <button class="btn btn-light" type="button"><i class="fas fa-search text-muted"></i></button>
+                </div>
+            </form>
+
+            <div class="ms-auto d-flex align-items-center">
+                <span class="me-3 fw-bold text-secondary">Hola, Admin</span>
+                <form th:action="@{/logout}" method="post">
+                    <button class="btn btn-outline-danger btn-sm" type="submit">
+                        <i class="fas fa-sign-out-alt"></i> Salir
+                    </button>
+                </form>
+            </div>
+        </div>
+    </nav>
+</body>
+</html>

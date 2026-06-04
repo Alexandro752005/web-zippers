@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="form-usuario">
+        <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title fw-bold" th:text="${usuarioDto.id == null} ? 'Registrar Nuevo Usuario' : 'Editar Usuario'"></h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        
+        <form th:object="${usuarioDto}"
+              hx-post="/dashboard/usuarios/guardar"
+              hx-target="#modal-content-usuario"
+              hx-swap="innerHTML"
+              id="form-guardar-usuario">
+            
+            <input type="hidden" th:field="*{id}">
+            
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Nombre Completo</label>
+                    <input type="text" class="form-control" th:field="*{nombreCompleto}"
+                           th:classappend="${#fields.hasErrors('nombreCompleto')} ? 'is-invalid'" required>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('nombreCompleto')}" th:errors="*{nombreCompleto}"></div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Correo Electrónico</label>
+                    <input type="email" class="form-control" th:field="*{email}"
+                           th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" required>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Contraseña</label>
+                    <input type="password" class="form-control" th:field="*{password}"
+                           th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'"
+                           placeholder="Dejar vacío para mantener la actual">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                    <small class="text-muted" th:if="${usuarioDto.id != null}">Si no desea cambiar la contraseña, deje este campo vacío.</small>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Asignar Perfil (Rol)</label>
+                    <select class="form-select" th:field="*{rolId}" required>
+                        <option value="" disabled selected>Seleccione un perfil...</option>
+                        <option th:each="rol : ${roles}"
+                                th:value="${rol.id_rol}"
+                                th:text="${rol.nombre}"
+                                th:selected="${rol.id_rol == usuarioDto.rolId}"></option>
+                    </select>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('rolId')}" th:errors="*{rolId}"></div>
+                </div>
+
+                <div class="mb-3 border-top pt-3 mt-4" th:if="${usuarioDto.id != null}">
+                    <label class="form-label fw-bold">Estado del Usuario</label>
+                    <select class="form-select" th:field="*{estado}" 
+                            th:disabled="${usuarioDto.rolId == 1}"
+                            th:classappend="${usuarioDto.rolId == 1} ? 'bg-light'">
+                        <option value="ACTIVO">ACTIVO (Permitir acceso al sistema)</option>
+                        <option value="INACTIVO">INACTIVO (Bloquear acceso al sistema)</option>
+                    </select>
+                    <div class="form-text text-danger" th:if="${usuarioDto.rolId == 1}">
+                        <i class="fas fa-shield-alt me-1"></i> El estado de un Administrador no puede ser modificado por seguridad.
+                    </div>
+                    <input type="hidden" th:if="${usuarioDto.rolId == 1}" name="estado" value="ACTIVO">
+                </div>
+
+            </div>
+            
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-success fw-bold">
+                    <span class="htmx-indicator-label">Guardar Cambios</span>
+                    <span class="spinner-border spinner-border-sm htmx-indicator" role="status" aria-hidden="true"></span>
+                </button>
+            </div>
+            <style>
+                .htmx-indicator { display: none; }
+                .htmx-request .htmx-indicator { display: inline-block; }
+                .htmx-request .htmx-indicator-label { display: none; }
+            </style>
+        </form>
+    </div>
+
+    <div th:fragment="exito">
+        <script>
+            var modalEl = document.getElementById('modal-usuario');
+            if (modalEl) {
+                var modal = bootstrap.Modal.getInstance(modalEl);
+                if (modal) modal.hide();
+            }
+            
+            var alerta = document.getElementById('alerta-exito-usuario');
+            if (alerta) {
+                alerta.classList.remove('d-none');
+                setTimeout(() => alerta.classList.add('d-none'), 3000);
+            }
+            
+            htmx.ajax('GET', '/dashboard/usuarios/tabla', {target: '#tabla-usuarios', swap: 'outerHTML'});
+        </script>
+    </div>
+</body>
+</html>
