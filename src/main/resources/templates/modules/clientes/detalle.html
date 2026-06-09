@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="modal">
+  <div class="modal fade" id="zpModalClienteDetalle" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fa-solid fa-id-card me-2"></i>Detalle del Cliente</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <dl class="row mb-0">
+            <dt class="col-sm-4">DNI</dt><dd class="col-sm-8" th:text="${c.dni}">—</dd>
+            <dt class="col-sm-4">Nombres</dt><dd class="col-sm-8" th:text="${c.nombres}">—</dd>
+            <dt class="col-sm-4">Apellidos</dt><dd class="col-sm-8" th:text="${c.apellidos}">—</dd>
+            <dt class="col-sm-4">Correo</dt><dd class="col-sm-8" th:text="${c.email}">—</dd>
+            <dt class="col-sm-4">Teléfono</dt><dd class="col-sm-8" th:text="${c.telefono} ?: '—'">—</dd>
+            <dt class="col-sm-4">Dirección</dt><dd class="col-sm-8" th:text="${c.direccion} ?: '—'">—</dd>
+            <dt class="col-sm-4">Referencia</dt><dd class="col-sm-8" th:text="${c.referenciaDireccion} ?: '—'">—</dd>
+            <dt class="col-sm-4">Estado</dt>
+            <dd class="col-sm-8">
+              <span class="badge rounded-pill bg-success" th:if="${c.estado == 'ACTIVO'}">ACTIVO</span>
+              <span class="badge rounded-pill bg-secondary" th:if="${c.estado != 'ACTIVO'}">INACTIVO</span>
+            </dd>
+            <dt class="col-sm-4">Acceso web</dt>
+            <dd class="col-sm-8">
+              <span class="badge rounded-pill bg-info text-white" th:if="${c.idUsuario != null}">Habilitado</span>
+              <span class="badge rounded-pill bg-light text-dark border" th:if="${c.idUsuario == null}">No habilitado</span>
+            </dd>
+          </dl>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var el = document.getElementById('zpModalClienteDetalle');
+      if (el && window.bootstrap) {
+        var m = new bootstrap.Modal(el);
+        m.show();
+        el.addEventListener('hidden.bs.modal', function () {
+          var slot = document.getElementById('zp-modal-slot');
+          if (slot) slot.innerHTML = '';
+        });
+      }
+    })();
+  </script>
+</div>
+</body>
+</html>

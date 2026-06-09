@@ -1,0 +1,85 @@
+<aside xmlns:th="http://www.thymeleaf.org"
+       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+       th:fragment="sidebar" class="zp-sidebar zp-sidebar-inner">
+
+    <div class="zp-brand">
+        <i class="fa-solid fa-cube"></i>
+        <span>ZIPPERS PERÚ</span>
+    </div>
+
+    <nav class="zp-nav">
+
+        <a class="zp-nav-item" data-modulo="home"
+           hx-get="/modulo/home?action=list" hx-target="#zp-contenido"
+           hx-push-url="/dashboard?modulo=home" href="javascript:void(0)">
+            <i class="fa-solid fa-gauge-high"></i><span>Dashboard</span>
+        </a>
+
+        <div class="zp-nav-group">Administración</div>
+
+        <!-- ✅ USUARIOS (PASO 2: sin hx-push-url para no reescribir la URL) -->
+        <a sec:authorize="hasAuthority('USUARIOS_VER') or hasRole('ADMIN')"
+           class="zp-nav-item" data-modulo="usuarios"
+           hx-get="/modulo/usuarios?action=list"
+           hx-target="#zp-contenido"
+           href="javascript:void(0)">
+            <i class="fa-solid fa-users-gear me-2"></i> Usuarios
+        </a>
+
+        <a class="zp-nav-item" data-modulo="perfiles"
+           sec:authorize="hasAuthority('PERFILES_VER') or hasRole('ADMIN')"
+           hx-get="/modulo/perfiles?action=list" hx-target="#zp-contenido"
+           hx-push-url="/dashboard?modulo=perfiles" href="javascript:void(0)">
+            <i class="fa-solid fa-shield-halved"></i><span>Perfiles</span>
+        </a>
+
+        <div class="zp-nav-group">Catálogo y Almacén</div>
+        <a class="zp-nav-item" data-modulo="categorias"
+           sec:authorize="hasAuthority('CATEGORIAS_VER') or hasRole('ADMIN')"
+           hx-get="/modulo/categorias?action=list" hx-target="#zp-contenido"
+           hx-push-url="/dashboard?modulo=categorias" href="javascript:void(0)">
+            <i class="fa-solid fa-tags"></i><span>Categorías</span>
+        </a>
+        <a class="zp-nav-item" data-modulo="productos"
+           sec:authorize="hasAuthority('PRODUCTOS_VER') or hasRole('ADMIN')"
+           hx-get="/modulo/productos?action=list" hx-target="#zp-contenido"
+           hx-push-url="/dashboard?modulo=productos" href="javascript:void(0)">
+            <i class="fa-solid fa-box"></i><span>Productos</span>
+        </a>
+        <a class="zp-nav-item disabled" data-modulo="inventario" href="javascript:void(0)">
+            <i class="fa-solid fa-warehouse"></i><span>Inventario</span>
+        </a>
+        <a class="zp-nav-item disabled" data-modulo="temporadas" href="javascript:void(0)">
+            <i class="fa-solid fa-percent"></i><span>Temporadas y Dsctos</span>
+        </a>
+
+        <div class="zp-nav-group">Comercial</div>
+        <a class="zp-nav-item" data-modulo="clientes"
+           sec:authorize="hasAuthority('CLIENTES_VER') or hasRole('ADMIN')"
+           hx-get="/modulo/clientes?action=list" hx-target="#zp-contenido"
+           hx-push-url="/dashboard?modulo=clientes" href="javascript:void(0)">
+            <i class="fa-solid fa-id-card"></i><span>Clientes</span>
+        </a>
+        <a class="zp-nav-item disabled" data-modulo="ventas" href="javascript:void(0)">
+            <i class="fa-solid fa-cart-shopping"></i><span>Ventas</span>
+        </a>
+        <a class="zp-nav-item disabled" data-modulo="despacho" href="javascript:void(0)">
+            <i class="fa-solid fa-truck"></i><span>Despacho</span>
+        </a>
+        <a class="zp-nav-item disabled" data-modulo="recojo" href="javascript:void(0)">
+            <i class="fa-solid fa-store"></i><span>Recojo</span>
+        </a>
+        <a class="zp-nav-item disabled" data-modulo="cotizaciones" href="javascript:void(0)">
+            <i class="fa-solid fa-file-lines"></i><span>Cotizaciones</span>
+        </a>
+
+        <div class="zp-nav-group">Configuración</div>
+        <a class="zp-nav-item disabled" data-modulo="tienda" href="javascript:void(0)">
+            <i class="fa-solid fa-gear"></i><span>Gestión Tienda</span>
+        </a>
+        <a class="zp-nav-item" target="_blank" th:href="@{/tienda}">
+            <i class="fa-solid fa-globe"></i><span>Sitio Web</span>
+            <i class="fa-solid fa-arrow-up-right-from-square ms-auto zp-ext"></i>
+        </a>
+    </nav>
+</aside>

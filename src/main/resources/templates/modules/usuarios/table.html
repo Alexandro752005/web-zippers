@@ -1,0 +1,58 @@
+<div xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" th:fragment="tabla" class="table-responsive">
+    <table class="table table-hover align-middle mb-0 text-sm">
+        <thead class="table-light text-secondary">
+            <tr>
+                <th class="fw-semibold">ID</th>
+                <th class="fw-semibold">USUARIO</th>
+                <th class="fw-semibold">COLABORADOR</th>
+                <th class="fw-semibold">CORREO</th>
+                <th class="fw-semibold">IDENTIFICACIÓN</th>
+                <th class="fw-semibold">PERFIL</th>
+                <th class="fw-semibold">ESTADO</th>
+                <th class="fw-semibold">F. REGISTRO</th>
+                <th class="text-end fw-semibold">ACCIONES</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:if="${#lists.isEmpty(usuarios)}">
+                <td colspan="9" class="text-center py-4 text-muted">No se encontraron registros de usuarios.</td>
+            </tr>
+            <tr th:each="u : ${usuarios}">
+                <td th:text="${u.idUsuario}">1</td>
+                <td class="fw-bold text-dark" th:text="${u.username}">admin</td>
+                <td th:text="${u.nombreCompleto}">Nombre del Colaborador</td>
+                <td th:text="${u.email}">correo@zippers.pe</td>
+                <td>
+                    <div th:text="${u.dni}">00000000</div>
+                    <div class="text-muted small" th:text="${u.telefono ?: 'Sin teléfono'}">999999999</div>
+                </td>
+                <td>
+                    <span class="badge bg-light text-dark border rounded-0 font-monospace" th:text="${u.rolNombre ?: u.rolCodigo}">ADMIN</span>
+                </td>
+                <td>
+                    <span th:if="${u.estado == 'ACTIVO'}" class="badge bg-success rounded-pill px-2">ACTIVO</span>
+                    <span th:if="${u.estado != 'ACTIVO'}" class="badge bg-secondary rounded-pill px-2">INACTIVO</span>
+                </td>
+                <td th:text="${#temporals.format(u.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2026 00:00</td>
+                <td class="text-end">
+                    <button class="btn btn-sm btn-primary rounded-0 me-1"
+                            sec:authorize="hasAuthority('USUARIOS_EDITAR') or hasRole('ADMIN')"
+                            th:hx-get="@{/modulo/usuarios(action='form', id=${u.idUsuario})}"
+                            hx-target="#zp-modal-slot" hx-swap="innerHTML" title="Editar">
+                        <i class="fa-solid fa-pen text-xs"></i>
+                    </button>
+                    
+                    <button class="btn btn-sm btn-danger rounded-0"
+                            sec:authorize="hasAuthority('USUARIOS_ELIMINAR') or hasRole('ADMIN')"
+                            th:if="${u.estado == 'ACTIVO' and u.rolCodigo != 'ADMIN'}"
+                            th:hx-post="@{/modulo/usuarios(action='toggle')}"
+                            th:hx-vals="|{&quot;idUsuario&quot;: ${u.idUsuario}}|"
+                            hx-target="#zp-usuarios-tabla" hx-swap="innerHTML"
+                            hx-confirm="¿Está seguro de desactivar esta cuenta de usuario?" title="Desactivar">
+                        <i class="fa-solid fa-user-slash text-xs"></i>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="modulo" id="zp-modulo-categorias">
+
+  <div class="d-flex justify-content-between align-items-center mb-1">
+    <h4 class="mb-0">
+      <i class="fa-solid fa-tags me-2 text-primary"></i>Gestión de Categorías
+    </h4>
+    <button type="button" class="btn btn-primary"
+            hx-get="/modulo/categorias?action=form"
+            hx-target="#zp-modal-slot" hx-swap="innerHTML">
+      <i class="fa-solid fa-plus me-1"></i> Nueva Categoría
+    </button>
+  </div>
+  <p class="text-muted mb-3">Administra las categorías del sistema</p>
+
+  <div class="card">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <span class="fw-semibold">Lista de Categorías</span>
+      <div class="d-flex align-items-center gap-2">
+        <label class="small text-muted mb-0">Mostrar</label>
+        <select class="form-select form-select-sm" style="width:auto" name="size"
+                hx-get="/modulo/categorias?action=table&page=0"
+                hx-target="#zp-categorias-tabla" hx-swap="innerHTML"
+                hx-include="[name='q']">
+          <option value="10" selected>10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+        <span class="small text-muted">registros</span>
+        <input type="text" name="q" class="form-control form-control-sm" style="width:220px"
+               placeholder="Buscar categorías..."
+               hx-get="/modulo/categorias?action=table&page=0"
+               hx-trigger="keyup changed delay:500ms"
+               hx-target="#zp-categorias-tabla" hx-swap="innerHTML"
+               hx-include="[name='size']">
+      </div>
+    </div>
+    <div class="card-body p-0">
+      <div id="zp-categorias-tabla">
+        <div th:replace="modules/categorias/table :: tabla"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="zp-modal-slot"></div>
+</div>
+</body>
+</html>

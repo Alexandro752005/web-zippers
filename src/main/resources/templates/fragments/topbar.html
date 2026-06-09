@@ -1,0 +1,26 @@
+<header xmlns:th="http://www.thymeleaf.org"
+        xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+        th:fragment="topbar" class="zp-topbar">
+
+    <button class="zp-burger" type="button" onclick="zpToggleSidebar()">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <div class="zp-search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Buscar en el sistema..." aria-label="Buscar">
+    </div>
+
+    <div class="zp-topbar-right">
+        <span class="zp-user">
+            <i class="fa-solid fa-circle-user"></i>
+            <span th:text="${usuarioNombre} ?: 'Usuario'">Usuario</span>
+            <span class="zp-user-rol" th:if="${usuarioRol}" th:text="'(' + ${usuarioRol} + ')'"></span>
+        </span>
+        <form th:action="@{/logout}" method="post" class="d-inline ms-3">
+            <button class="btn btn-sm btn-outline-secondary" type="submit">
+                <i class="fa-solid fa-right-from-bracket"></i> Salir
+            </button>
+        </form>
+    </div>
+</header>

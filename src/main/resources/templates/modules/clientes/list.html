@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="modulo" id="zp-modulo-clientes">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">
+      <i class="fa-solid fa-users me-2 text-primary"></i>Gestión de Clientes
+    </h4>
+    <button type="button" class="btn btn-primary"
+            hx-get="/modulo/clientes?action=form"
+            hx-target="#zp-modal-slot" hx-swap="innerHTML">
+      <i class="fa-solid fa-plus me-1"></i> Nuevo Cliente
+    </button>
+  </div>
+
+  <div class="mb-3">
+    <input type="text" name="q" class="form-control"
+           placeholder="Buscar por DNI, nombres, apellidos o correo..."
+           hx-get="/modulo/clientes?action=table"
+           hx-trigger="keyup changed delay:500ms"
+           hx-target="#zp-clientes-tabla" hx-swap="innerHTML"
+           th:value="${filtro}">
+  </div>
+
+  <div id="zp-clientes-tabla">
+    <div th:replace="modules/clientes/table :: tabla"></div>
+  </div>
+
+  <div id="zp-modal-slot"></div>
+</div>
+</body>
+</html>

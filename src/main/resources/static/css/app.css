@@ -1,0 +1,314 @@
+/* =========================================================
+   Zippers Perú — app.css  (Fase 4.6 / 4.9)
+   Layout backoffice: sidebar claro fijo + contenido a la derecha
+   ========================================================= */
+
+:root {
+  --zp-sidebar-w: 256px;
+  --zp-topbar-h: 60px;
+  --zp-bg: #f4f6f9;
+  --zp-sidebar-bg: #ffffff;
+  --zp-sidebar-border: #e5e8ec;
+  --zp-text: #1f2937;
+  --zp-text-muted: #6b7280;
+  --zp-primary: #0d6efd;
+  --zp-hover: #eef2f7;
+  --zp-active-bg: #e7f1ff;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--zp-bg);
+  color: var(--zp-text);
+  font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+}
+
+/* ===================== ESTRUCTURA ===================== */
+.zp-app { min-height: 100vh; }
+
+/* Sidebar FIJO a la izquierda */
+.zp-sidebar-inner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--zp-sidebar-w);
+  height: 100vh;
+  background: var(--zp-sidebar-bg);
+  border-right: 1px solid var(--zp-sidebar-border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  z-index: 1030;
+}
+
+/* Contenedor principal: deja espacio para el sidebar (ARREGLA 4.6) */
+.zp-main {
+  margin-left: var(--zp-sidebar-w);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===================== MARCA ===================== */
+.zp-brand {
+  height: var(--zp-topbar-h);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 18px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  color: var(--zp-text);
+  border-bottom: 1px solid var(--zp-sidebar-border);
+}
+.zp-brand i { color: var(--zp-primary); font-size: 20px; }
+
+/* ===================== NAVEGACIÓN ===================== */
+.zp-nav { padding: 10px 10px 24px; display: flex; flex-direction: column; gap: 2px; }
+
+.zp-nav-group {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .6px;
+  color: var(--zp-text-muted);
+  padding: 14px 10px 6px;
+}
+
+.zp-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 12px;
+  color: var(--zp-text);          /* letras negras (ARREGLA 4.9) */
+  text-decoration: none;
+  font-size: 14px;
+  border-left: 3px solid transparent;
+  transition: background .12s ease;
+}
+.zp-nav-item i { width: 18px; text-align: center; color: var(--zp-text-muted); }
+.zp-nav-item span { white-space: nowrap; }
+
+.zp-nav-item:hover { background: var(--zp-hover); color: var(--zp-text); }
+.zp-nav-item:hover i { color: var(--zp-primary); }
+
+.zp-nav-item.active {
+  background: var(--zp-active-bg);
+  color: var(--zp-primary);
+  font-weight: 600;
+  border-left-color: var(--zp-primary);
+}
+.zp-nav-item.active i { color: var(--zp-primary); }
+
+.zp-nav-item.disabled {
+  color: #aeb4bd;
+  pointer-events: none;
+  cursor: default;
+}
+.zp-nav-item.disabled i { color: #c7ccd3; }
+
+/* Botón Ver Tienda Online */
+.zp-nav-shop {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 10px 0;
+  padding: 10px 12px;
+  background: var(--zp-primary);
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+.zp-nav-shop i { color: #fff; }
+.zp-nav-shop:hover { background: #0b5ed7; color: #fff; }
+
+/* ===================== TOPBAR ===================== */
+.zp-topbar {
+  height: var(--zp-topbar-h);
+  background: #fff;
+  border-bottom: 1px solid var(--zp-sidebar-border);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 18px;
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+}
+.zp-burger {
+  display: none;
+  border: 1px solid var(--zp-sidebar-border);
+  background: #fff;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.zp-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--zp-bg);
+  border: 1px solid var(--zp-sidebar-border);
+  padding: 6px 12px;
+  flex: 1;
+  max-width: 420px;
+}
+.zp-search i { color: var(--zp-text-muted); }
+.zp-search input { border: none; background: transparent; outline: none; width: 100%; font-size: 14px; }
+
+.zp-topbar-right { margin-left: auto; display: flex; align-items: center; }
+.zp-user { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.zp-user i { font-size: 20px; color: var(--zp-text-muted); }
+.zp-user-rol { color: var(--zp-text-muted); font-size: 12px; }
+
+/* ===================== CONTENIDO ===================== */
+.zp-contenido { padding: 22px 26px; flex: 1; }
+
+/* ===================== MÓDULO / PANEL DE CONTROL ===================== */
+.zp-module-head { margin-bottom: 18px; }
+.zp-module-title { font-size: 24px; font-weight: 700; margin: 0; }
+.zp-module-sub { color: var(--zp-text-muted); margin: 2px 0 0; }
+
+/* Tarjetas KPI */
+.zp-kpi {
+  background: #fff;
+  border: 1px solid var(--zp-sidebar-border);
+  padding: 18px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.zp-kpi-label { color: var(--zp-text-muted); font-size: 13px; display: flex; align-items: center; gap: 8px; }
+.zp-kpi-value { font-size: 26px; font-weight: 700; }
+.zp-kpi-foot { font-size: 12px; color: var(--zp-text-muted); }
+.zp-kpi .progress { height: 6px; margin-top: 6px; }
+
+/* Tarjetas secundarias */
+.zp-mini {
+  background: #fff;
+  border: 1px solid var(--zp-sidebar-border);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 100%;
+}
+.zp-mini-icon {
+  width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 18px;
+}
+.zp-mini-label { color: var(--zp-text-muted); font-size: 13px; }
+.zp-mini-value { font-size: 20px; font-weight: 700; }
+
+/* Panel genérico */
+.zp-panel { background: #fff; border: 1px solid var(--zp-sidebar-border); }
+.zp-panel-head {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--zp-sidebar-border);
+  font-weight: 600;
+  display: flex; align-items: center; gap: 8px;
+}
+.zp-panel-body { padding: 16px; }
+
+/* Sin radios internos exagerados en tarjetas de Bootstrap dentro del backoffice */
+.zp-contenido .card { border-radius: 2px; }
+.zp-contenido .btn { border-radius: 2px; }
+
+/* ===================== RESPONSIVE ===================== */
+@media (max-width: 992px) {
+  .zp-sidebar-inner { transform: translateX(-100%); transition: transform .2s ease; }
+  .zp-app.zp-open .zp-sidebar-inner { transform: translateX(0); }
+  .zp-main { margin-left: 0; }
+  .zp-burger { display: inline-flex; }
+}
+/* ============================================================
+   LOGIN — Pantalla de autenticación corporativa
+   ============================================================ */
+.zp-login-page {
+  margin: 0;
+  min-height: 100vh;
+  background-color: #f4f6f9;            /* neutro, limpio */
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: #1f2937;
+}
+
+/* Centro vertical y horizontal; sin scroll en condiciones normales */
+.zp-login-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+/* Tarjeta de ancho controlado, nunca se expande de más */
+.zp-login-card {
+  width: 100%;
+  max-width: 400px;                     /* ancho controlado */
+  background: #ffffff;
+  border: 1px solid #e5e8ec;
+  border-radius: 6px;                   /* bordes poco redondeados */
+  box-shadow: 0 6px 24px rgba(16, 24, 40, 0.08);  /* sombra formal y ligera */
+  padding: 40px 36px 28px;              /* separación interna amplia */
+  box-sizing: border-box;
+}
+
+.zp-login-head { text-align: center; margin-bottom: 24px; }
+
+.zp-login-logo {
+  width: 56px; height: 56px;
+  margin: 0 auto 14px;
+  display: flex; align-items: center; justify-content: center;
+  background: #0d6efd;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 24px;
+}
+
+.zp-login-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 0 0 4px;
+  color: #111827;
+}
+
+.zp-login-subtitle {
+  font-size: 0.95rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.zp-login-alert { border-radius: 4px; font-size: 0.9rem; }
+
+.zp-login-form { margin-top: 8px; }
+
+.zp-field { margin-bottom: 18px; }
+.zp-field .form-label { font-weight: 600; font-size: 0.88rem; color: #374151; }
+.zp-field .input-group-text { background: #f8f9fa; color: #6b7280; border-color: #ced4da; }
+.zp-field .form-control { box-shadow: none; }
+
+/* El botón Entrar = acción principal, alineado al ancho de los campos */
+.zp-login-btn {
+  width: 100%;
+  padding: 10px 0;
+  font-weight: 600;
+  border-radius: 4px;
+  margin-top: 6px;
+}
+
+.zp-login-foot {
+  text-align: center;
+  margin-top: 22px;
+  font-size: 0.78rem;
+  color: #9ca3af;
+}
+
+/* Responsive: en móviles muy pequeños, padding más compacto */
+@media (max-width: 420px) {
+  .zp-login-card { padding: 30px 22px 22px; }
+}

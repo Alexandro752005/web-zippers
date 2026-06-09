@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="modal">
+  <div class="modal fade" id="zpModalCategoria" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+
+        <form hx-post="/modulo/categorias"
+              hx-target="#zp-categorias-tabla" hx-swap="innerHTML">
+
+          <input type="hidden" name="action"
+                 th:value="${categoria.idCategoria} != null ? 'save-editar' : 'save-crear'">
+          <input type="hidden" name="idCategoria" th:if="${categoria.idCategoria} != null"
+                 th:value="${categoria.idCategoria}">
+
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="fa-solid fa-tags me-2"></i>
+              <span th:text="${categoria.idCategoria} != null ? 'Editar Categoría' : 'Nueva Categoría'">Categoría</span>
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Nombre de la Categoría <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="nombre"
+                     th:value="${categoria.nombre}" maxlength="100"
+                     placeholder="Ej: Conjuntos" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Descripción</label>
+              <textarea class="form-control" name="descripcion" rows="3" maxlength="255"
+                        placeholder="Describe brevemente esta categoría..."
+                        th:text="${categoria.descripcion}"></textarea>
+            </div>
+            <div class="mb-1" th:if="${categoria.idCategoria} != null">
+              <label class="form-label d-block">Estado del Registro</label>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch"
+                       id="zpCatEstado" name="estado" value="ACTIVO"
+                       th:checked="${categoria.estado == 'ACTIVO'}">
+                <label class="form-check-label" for="zpCatEstado"
+                       th:text="${categoria.estado == 'ACTIVO'} ? 'Categoría Activa' : 'Categoría Inactiva'">Estado</label>
+              </div>
+              <input type="hidden" name="estado" value="INACTIVO">
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">
+              <i class="fa-solid fa-floppy-disk me-1"></i> Guardar Categoría
+            </button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var el = document.getElementById('zpModalCategoria');
+      if (el && window.bootstrap) {
+        var m = new bootstrap.Modal(el);
+        m.show();
+        el.addEventListener('hidden.bs.modal', function () {
+          var slot = document.getElementById('zp-modal-slot');
+          if (slot) slot.innerHTML = '';
+        });
+      }
+      var sw = document.getElementById('zpCatEstado');
+      if (sw) {
+        sw.addEventListener('change', function () {
+          var lbl = document.querySelector('label[for="zpCatEstado"]');
+          if (lbl) lbl.textContent = sw.checked ? 'Categoría Activa' : 'Categoría Inactiva';
+        });
+      }
+    })();
+  </script>
+</div>
+</body>
+</html>

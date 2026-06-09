@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="modal">
+  <div class="modal fade" id="zpModalProductoDet" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fa-solid fa-box me-2"></i>Detalle del producto</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <div th:if="${!#lists.isEmpty(fotos)}">
+                <img th:src="${fotos[0].urlFoto}" class="img-fluid border" alt="principal">
+              </div>
+              <div th:if="${#lists.isEmpty(fotos)}" class="text-muted text-center border p-5">
+                <i class="fa-regular fa-image fa-2x"></i><div>Sin imágenes</div>
+              </div>
+            </div>
+            <div class="col-md-8">
+              <span class="badge bg-secondary mb-2">Producto principal</span>
+              <h5 th:text="${p.nombre}">Nombre</h5>
+              <p class="text-muted" th:text="${p.descripcion} ?: '—'">Descripción</p>
+              <dl class="row mb-0">
+                <dt class="col-sm-3">SKU</dt><dd class="col-sm-9" th:text="${p.sku}">—</dd>
+                <dt class="col-sm-3">Marca</dt><dd class="col-sm-9" th:text="${p.marca} ?: '—'">—</dd>
+                <dt class="col-sm-3">Temporada</dt><dd class="col-sm-9" th:text="${p.temporada} ?: '—'">—</dd>
+                <dt class="col-sm-3">Precio venta</dt><dd class="col-sm-9">S/ <span th:text="${#numbers.formatDecimal(p.precioVenta,1,2)}">0.00</span></dd>
+                <dt class="col-sm-3">Estado</dt>
+                <dd class="col-sm-9">
+                  <span class="badge rounded-pill bg-success" th:if="${p.estado == 'ACTIVO'}">ACTIVO</span>
+                  <span class="badge rounded-pill bg-warning text-dark" th:if="${p.estado == 'SUSPENDIDO'}">OCULTO</span>
+                  <span class="badge rounded-pill bg-dark" th:if="${p.estado == 'AGOTADO'}">AGOTADO</span>
+                  <span class="badge rounded-pill bg-secondary" th:if="${p.estado == 'INACTIVO'}">INACTIVO</span>
+                </dd>
+                <dt class="col-sm-3">Visible web</dt>
+                <dd class="col-sm-9" th:text="${p.visibleWeb} ? 'Sí' : 'No'">No</dd>
+              </dl>
+            </div>
+          </div>
+
+          <hr>
+          <h6 class="text-uppercase text-muted small">Variantes</h6>
+          <div class="row g-2">
+            <div class="col-md-4" th:each="v : ${variantes}">
+              <div class="border p-2 h-100">
+                <div class="fw-semibold" th:text="${v.skuVariante}">SKU</div>
+                <div class="small">Color: <span th:text="${v.color} ?: '—'">—</span></div>
+                <div class="small">Talla: <span th:text="${v.talla} ?: '—'">—</span></div>
+                <div class="small">Precio: S/ <span th:text="${#numbers.formatDecimal(v.precioVenta,1,2)}">0.00</span></div>
+                <div class="small">Stock: <span th:text="${v.stockActual}">0</span></div>
+                <span class="badge rounded-pill bg-success" th:if="${v.estado == 'ACTIVO'}">ACTIVO</span>
+                <span class="badge rounded-pill bg-secondary" th:if="${v.estado != 'ACTIVO'}">INACTIVO</span>
+              </div>
+            </div>
+            <div class="col-12 text-muted small" th:if="${#lists.isEmpty(variantes)}">
+              Este producto no tiene variantes registradas.
+            </div>
+          </div>
+
+          <div class="alert alert-light border mt-3 mb-0 small">
+            <i class="fa-solid fa-lock me-1"></i> Esta vista es de solo lectura.
+            Última actualización:
+            <span th:text="${p.updatedAt != null ? #temporals.format(p.updatedAt,'dd/MM/yyyy HH:mm') : '—'}">—</span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-primary"
+                  th:attr="hx-get=|/modulo/productos?action=form&id=${p.idProducto}|"
+                  hx-target="#zp-modal-slot" hx-swap="innerHTML"
+                  data-bs-dismiss="modal">
+            <i class="fa-solid fa-pen me-1"></i> Editar producto
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var el = document.getElementById('zpModalProductoDet');
+      if (el && window.bootstrap) {
+        var m = new bootstrap.Modal(el);
+        m.show();
+        el.addEventListener('hidden.bs.modal', function () {
+          var slot = document.getElementById('zp-modal-slot');
+          if (slot) slot.innerHTML = '';
+        });
+      }
+    })();
+  </script>
+</div>
+</body>
+</html>

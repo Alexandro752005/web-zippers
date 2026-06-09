@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="modulo" id="zp-modulo-perfiles">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">
+      <i class="fa-solid fa-shield-halved me-2 text-primary"></i>Gestión de Perfiles
+    </h4>
+    <button type="button" class="btn btn-primary"
+            th:hx-get="@{/modulo/perfiles(action='form')}"
+            hx-target="#zp-modal-slot" hx-swap="innerHTML">
+      <i class="fa-solid fa-plus me-1"></i> Nuevo Perfil
+    </button>
+  </div>
+
+  <div class="mb-3">
+    <input type="text" name="q" class="form-control" placeholder="Buscar perfil por nombre, código o descripción..."
+           th:hx-get="@{/modulo/perfiles(action='table')}"
+           hx-trigger="keyup changed delay:500ms"
+           hx-target="#zp-perfiles-tabla" hx-swap="innerHTML"
+           th:value="${filtro}">
+  </div>
+
+  <div id="zp-perfiles-tabla">
+    <div th:replace="~{modules/perfiles/table :: tabla}"></div>
+  </div>
+
+  <div id="zp-modal-slot"></div>
+</div>
+</body>
+</html>

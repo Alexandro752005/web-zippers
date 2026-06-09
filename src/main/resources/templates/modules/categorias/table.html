@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="tabla">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th style="width:10%">
+            <a href="javascript:void(0)" class="text-decoration-none text-dark"
+               th:attr="hx-get=|/modulo/categorias?action=table&q=${filtro}&size=${size}&page=${pageActual}&sort=idCategoria&dir=${(sort=='idCategoria' and dir=='asc')?'desc':'asc'}|"
+               hx-target="#zp-categorias-tabla" hx-swap="innerHTML">
+              ID <i class="fa-solid fa-sort small"></i>
+            </a>
+          </th>
+          <th style="width:25%">
+            <a href="javascript:void(0)" class="text-decoration-none text-dark"
+               th:attr="hx-get=|/modulo/categorias?action=table&q=${filtro}&size=${size}&page=${pageActual}&sort=nombre&dir=${(sort=='nombre' and dir=='asc')?'desc':'asc'}|"
+               hx-target="#zp-categorias-tabla" hx-swap="innerHTML">
+              NOMBRE <i class="fa-solid fa-sort small"></i>
+            </a>
+          </th>
+          <th style="width:38%">DESCRIPCIÓN</th>
+          <th style="width:12%">
+            <a href="javascript:void(0)" class="text-decoration-none text-dark"
+               th:attr="hx-get=|/modulo/categorias?action=table&q=${filtro}&size=${size}&page=${pageActual}&sort=estado&dir=${(sort=='estado' and dir=='asc')?'desc':'asc'}|"
+               hx-target="#zp-categorias-tabla" hx-swap="innerHTML">
+              ESTADO <i class="fa-solid fa-sort small"></i>
+            </a>
+          </th>
+          <th style="width:15%" class="text-end">ACCIONES</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:if="${#lists.isEmpty(categorias)}">
+          <td colspan="5" class="text-center text-muted py-4">No se encontraron categorías.</td>
+        </tr>
+        <tr th:each="c : ${categorias}">
+          <td><span class="text-muted">#</span><span th:text="${c.idCategoria}">1</span></td>
+          <td class="fw-semibold" th:text="${c.nombre}">Nombre</td>
+          <td th:text="${c.descripcion} ?: '—'">Descripción</td>
+          <td>
+            <span class="badge rounded-pill bg-success" th:if="${c.estado == 'ACTIVO'}">ACTIVO</span>
+            <span class="badge rounded-pill bg-secondary" th:if="${c.estado != 'ACTIVO'}">INACTIVO</span>
+          </td>
+          <td class="text-end">
+            <button type="button" class="btn btn-sm btn-primary"
+                    th:attr="hx-get=|/modulo/categorias?action=form&id=${c.idCategoria}|"
+                    hx-target="#zp-modal-slot" hx-swap="innerHTML" title="Editar">
+              <i class="fa-solid fa-pen"></i>
+            </button>
+            <button type="button" class="btn btn-sm btn-danger"
+                    th:if="${c.estado == 'ACTIVO'}"
+                    th:attr="hx-post=|/modulo/categorias|,
+                             hx-vals=|{&quot;action&quot;:&quot;toggle&quot;,&quot;idCategoria&quot;:${c.idCategoria}}|"
+                    hx-target="#zp-categorias-tabla" hx-swap="innerHTML"
+                    hx-confirm="¿Desactivar esta categoría?" title="Desactivar">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+            <button type="button" class="btn btn-sm btn-success"
+                    th:if="${c.estado != 'ACTIVO'}"
+                    th:attr="hx-post=|/modulo/categorias|,
+                             hx-vals=|{&quot;action&quot;:&quot;toggle&quot;,&quot;idCategoria&quot;:${c.idCategoria}}|"
+                    hx-target="#zp-categorias-tabla" hx-swap="innerHTML"
+                    hx-confirm="¿Reactivar esta categoría?" title="Reactivar">
+              <i class="fa-solid fa-rotate-left"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center p-2 border-top">
+    <span class="small text-muted">
+      Página <span th:text="${pageActual + 1}">1</span> de
+      <span th:text="${totalPaginas == 0 ? 1 : totalPaginas}">1</span>
+      (<span th:text="${totalRegistros}">0</span> registros)
+    </span>
+    <div class="btn-group">
+      <button type="button" class="btn btn-sm btn-light border"
+              th:disabled="${pageActual == 0}"
+              th:attr="hx-get=|/modulo/categorias?action=table&q=${filtro}&size=${size}&sort=${sort}&dir=${dir}&page=${pageActual - 1}|"
+              hx-target="#zp-categorias-tabla" hx-swap="innerHTML">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+      <button type="button" class="btn btn-sm btn-light border"
+              th:disabled="${pageActual + 1 >= totalPaginas}"
+              th:attr="hx-get=|/modulo/categorias?action=table&q=${filtro}&size=${size}&sort=${sort}&dir=${dir}&page=${pageActual + 1}|"
+              hx-target="#zp-categorias-tabla" hx-swap="innerHTML">
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

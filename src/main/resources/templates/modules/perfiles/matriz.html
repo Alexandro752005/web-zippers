@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="modal">
+  <div class="modal fade" id="zpModalMatriz" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+      <div class="modal-content">
+
+        <form th:hx-post="@{/modulo/perfiles}"
+              hx-target="#zp-perfiles-tabla" hx-swap="innerHTML">
+
+          <input type="hidden" name="action" value="save-matriz">
+          <input type="hidden" name="idRol" th:value="${idRol}">
+
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="fa-solid fa-key me-2"></i>
+              Permisos — <span th:text="${perfil.nombre}">Perfil</span>
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+
+          <div class="modal-body">
+            <div class="table-responsive">
+              <table class="table table-sm table-bordered align-middle mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>MÓDULO</th>
+                    <th class="text-center" style="width:11%">Leer</th>
+                    <th class="text-center" style="width:11%">Crear</th>
+                    <th class="text-center" style="width:11%">Editar</th>
+                    <th class="text-center" style="width:11%">Eliminar</th>
+                    <th class="text-center" style="width:11%">Exportar</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:if="${#lists.isEmpty(matriz)}">
+                    <td colspan="6" class="text-center text-muted py-3">
+                      No hay módulos disponibles.
+                    </td>
+                  </tr>
+                  <tr th:each="m : ${matriz}">
+                    <td>
+                      <span class="fw-semibold" th:text="${m.nombreOpcion}">Módulo</span>
+                      <input type="hidden" name="opcionId" th:value="${m.idOpcion}">
+                    </td>
+                    <td class="text-center">
+                      <input class="form-check-input" type="checkbox" name="verIds"
+                             th:value="${m.idOpcion}" th:checked="${m.ver}">
+                    </td>
+                    <td class="text-center">
+                      <input class="form-check-input" type="checkbox" name="crearIds"
+                             th:value="${m.idOpcion}" th:checked="${m.crear}">
+                    </td>
+                    <td class="text-center">
+                      <input class="form-check-input" type="checkbox" name="editarIds"
+                             th:value="${m.idOpcion}" th:checked="${m.editar}">
+                    </td>
+                    <td class="text-center">
+                      <input class="form-check-input" type="checkbox" name="eliminarIds"
+                             th:value="${m.idOpcion}" th:checked="${m.eliminar}">
+                    </td>
+                    <td class="text-center">
+                      <input class="form-check-input" type="checkbox" name="exportarIds"
+                             th:value="${m.idOpcion}" th:checked="${m.exportar}">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="form-text mt-2">
+              Si marca cualquier acción, el módulo quedará visible automáticamente.
+              Los módulos sin ninguna marca no otorgan acceso.
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">
+              <i class="fa-solid fa-floppy-disk me-1"></i> Guardar permisos
+            </button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var el = document.getElementById('zpModalMatriz');
+      if (el && window.bootstrap) {
+        var m = new bootstrap.Modal(el);
+        m.show();
+        el.addEventListener('hidden.bs.modal', function () {
+          var slot = document.getElementById('zp-modal-slot');
+          if (slot) slot.innerHTML = '';
+        });
+      }
+    })();
+  </script>
+</div>
+</body>
+</html>

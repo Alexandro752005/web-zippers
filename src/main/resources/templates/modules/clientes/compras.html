@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="modal">
+  <div class="modal fade" id="zpModalCompras" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fa-solid fa-bag-shopping me-2"></i>Compras del Cliente</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+
+            <!-- IZQUIERDA: datos del cliente -->
+            <div class="col-md-4">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="text-center mb-3">
+                    <i class="fa-solid fa-circle-user fa-3x text-secondary"></i>
+                  </div>
+                  <h6 class="text-center mb-3" th:text="${c.nombres + ' ' + c.apellidos}">Cliente</h6>
+                  <dl class="row small mb-0">
+                    <dt class="col-5">DNI</dt><dd class="col-7" th:text="${c.dni}">—</dd>
+                    <dt class="col-5">Correo</dt><dd class="col-7 text-truncate" th:text="${c.email}">—</dd>
+                    <dt class="col-5">Teléfono</dt><dd class="col-7" th:text="${c.telefono} ?: '—'">—</dd>
+                    <dt class="col-5">Estado</dt>
+                    <dd class="col-7">
+                      <span class="badge rounded-pill bg-success" th:if="${c.estado == 'ACTIVO'}">ACTIVO</span>
+                      <span class="badge rounded-pill bg-secondary" th:if="${c.estado != 'ACTIVO'}">INACTIVO</span>
+                    </dd>
+                    <dt class="col-5">Total compras</dt>
+                    <dd class="col-7 fw-semibold" th:text="${#lists.size(compras)}">0</dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+
+            <!-- DERECHA: productos adquiridos -->
+            <div class="col-md-8">
+              <div th:if="${#lists.isEmpty(compras)}" class="text-muted text-center border p-5">
+                <i class="fa-solid fa-cart-flatbed fa-2x"></i>
+                <div class="mt-2">Este cliente aún no registra compras.</div>
+              </div>
+
+              <div th:unless="${#lists.isEmpty(compras)}">
+                <div class="card mb-3" th:each="venta : ${compras}">
+                  <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <span class="fw-semibold">
+                      <i class="fa-solid fa-receipt me-1 text-primary"></i>
+                      Nota <span th:text="${venta.numeroNota}">N-000</span>
+                    </span>
+                    <span class="small text-muted"
+                          th:text="${venta.fecha != null ? #temporals.format(venta.fecha,'dd/MM/yyyy HH:mm') : '—'}">fecha</span>
+                  </div>
+                  <div class="card-body p-0">
+                    <table class="table table-sm mb-0 align-middle">
+                      <thead class="table-light">
+                        <tr>
+                          <th>PRODUCTO</th>
+                          <th>VARIANTE</th>
+                          <th class="text-center">CANT.</th>
+                          <th class="text-end">P. UNIT.</th>
+                          <th class="text-end">SUBTOTAL</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr th:each="it : ${venta.items}">
+                          <td th:text="${it.nombreProducto}">Producto</td>
+                          <td class="small text-muted" th:text="${it.variante} ?: '—'">—</td>
+                          <td class="text-center" th:text="${it.cantidad}">0</td>
+                          <td class="text-end">S/ <span th:text="${#numbers.formatDecimal(it.precioUnitario,1,2)}">0.00</span></td>
+                          <td class="text-end">S/ <span th:text="${#numbers.formatDecimal(it.subtotal,1,2)}">0.00</span></td>
+                        </tr>
+                      </tbody>
+                      <tfoot>
+                        <tr class="table-light">
+                          <td colspan="4" class="text-end fw-semibold">TOTAL</td>
+                          <td class="text-end fw-semibold">S/ <span th:text="${#numbers.formatDecimal(venta.total,1,2)}">0.00</span></td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var el = document.getElementById('zpModalCompras');
+      if (el && window.bootstrap) {
+        var m = new bootstrap.Modal(el);
+        m.show();
+        el.addEventListener('hidden.bs.modal', function () {
+          var slot = document.getElementById('zp-modal-slot');
+          if (slot) slot.innerHTML = '';
+        });
+      }
+    })();
+  </script>
+</div>
+</body>
+</html>

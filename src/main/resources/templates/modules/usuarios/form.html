@@ -1,0 +1,98 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="modal">
+    <div class="modal fade" id="zpModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content rounded-0 border-0">
+                <form th:hx-post="${modo == 'crear'} ? @{/modulo/usuarios(action='save-crear')} : @{/modulo/usuarios(action='save-editar')}" 
+                      hx-target="#zp-usuarios-tabla" hx-swap="innerHTML">
+                    
+                    <input type="hidden" th:if="${modo == 'editar'}" name="idUsuario" th:value="${usuario.idUsuario}">
+                    
+                    <div class="modal-header bg-light rounded-0 border-bottom">
+                        <h5 class="modal-title fw-bold text-dark fs-6 text-uppercase">
+                            <i class="fa-solid fa-user-gear me-2 text-primary"></i>
+                            <span th:text="${modo == 'crear'} ? 'Registrar Nuevo Usuario' : 'Modificar Parámetros de Usuario'"></span>
+                        </h5>
+                        <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    
+                    <div class="modal-body py-4">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold mb-1 text-secondary">Username / ID Login <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control form-control-sm rounded-0 shadow-none" name="username" th:value="${usuario.username}" maxlength="60" required th:readonly="${modo == 'editar'}">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold mb-1 text-secondary">Correo Corporativo <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control form-control-sm rounded-0 shadow-none" name="email" th:value="${usuario.email}" maxlength="120" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold mb-1 text-secondary">Nombres <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control form-control-sm rounded-0 shadow-none" name="nombres" th:value="${usuario.nombres}" maxlength="100" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold mb-1 text-secondary">Apellidos <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control form-control-sm rounded-0 shadow-none" name="apellidos" th:value="${usuario.apellidos}" maxlength="100" required>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold mb-1 text-secondary">DNI Perú <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control form-control-sm rounded-0 shadow-none" name="dni" th:value="${usuario.dni}" maxlength="8" pattern="[0-9]{8}" required title="El DNI debe poseer exactamente 8 dígitos numéricos">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold mb-1 text-secondary">Teléfono Celular</label>
+                                <input type="text" class="form-control form-control-sm rounded-0 shadow-none" name="telefono" th:value="${usuario.telefono}" maxlength="9" pattern="[0-9]{9}" title="El teléfono en el contexto de Perú debe poseer 9 dígitos numéricos">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold mb-1 text-secondary">Clave de Acceso <span th:if="${modo == 'crear'}" class="text-danger">*</span></label>
+                                <input type="password" class="form-control form-control-sm rounded-0 shadow-none" name="password" maxlength="100" th:required="${modo == 'crear'}">
+                                <div class="form-text text-muted small mt-1" th:if="${modo == 'editar'}">Dejar en blanco para conservar la clave actual.</div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold mb-1 text-secondary">Perfil de Seguridad <span class="text-danger">*</span></label>
+                                <select class="form-select form-select-sm rounded-0 shadow-none" name="idRol" required>
+                                    <option value="" disabled th:selected="${usuario.idRol == null}">— Seleccione un Perfil —</option>
+                                    <option th:each="r : ${roles}" th:value="${r.idRol}" th:text="${r.nombre}" th:selected="${usuario.idRol == r.idRol}"></option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6" th:if="${modo == 'editar'}">
+                                <label class="form-label small fw-bold mb-1 text-secondary">Estado Operativo <span class="text-danger">*</span></label>
+                                <select class="form-select form-select-sm rounded-0 shadow-none" name="estado" required>
+                                    <option value="ACTIVO" th:selected="${usuario.estado == 'ACTIVO'}">ACTIVO</option>
+                                    <option value="INACTIVO" th:selected="${usuario.estado == 'INACTIVO'}">INACTIVO</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer bg-light rounded-0 py-2 border-top">
+                        <button type="button" class="btn btn-sm btn-light border rounded-0 px-3 text-secondary small" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-sm btn-primary rounded-0 px-3 small fw-semibold">
+                            <i class="fa-solid fa-floppy-disk me-1"></i> Registrar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            var el = document.getElementById('zpModal');
+            if (el && window.bootstrap) {
+                var m = new bootstrap.Modal(el);
+                m.show();
+                el.addEventListener('hidden.bs.modal', function () {
+                    var slot = document.getElementById('zp-modal-slot');
+                    if (slot) slot.innerHTML = '';
+                });
+            }
+        })();
+    </script>
+</div>

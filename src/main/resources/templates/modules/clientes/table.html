@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="tabla">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th style="width:11%">DNI</th>
+          <th style="width:24%">CLIENTE</th>
+          <th style="width:22%">CORREO</th>
+          <th style="width:11%">TELÉFONO</th>
+          <th style="width:12%" class="text-center">COMPRAS</th>
+          <th style="width:8%">WEB</th>
+          <th style="width:12%" class="text-end">ACCIONES</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:if="${#lists.isEmpty(clientes)}">
+          <td colspan="7" class="text-center text-muted py-4">No se encontraron clientes.</td>
+        </tr>
+        <tr th:each="c : ${clientes}">
+          <td th:text="${c.dni}">00000000</td>
+          <td>
+            <span class="fw-semibold" th:text="${c.nombres + ' ' + c.apellidos}">Nombre</span>
+            <div class="small">
+              <span class="badge rounded-pill bg-success" th:if="${c.estado == 'ACTIVO'}">ACTIVO</span>
+              <span class="badge rounded-pill bg-secondary" th:if="${c.estado != 'ACTIVO'}">INACTIVO</span>
+            </div>
+          </td>
+          <td th:text="${c.email}">correo</td>
+          <td th:text="${c.telefono} ?: '—'">999999999</td>
+          <!-- COMPRAS: contador clicable que abre el modal de compras -->
+          <td class="text-center">
+            <button type="button" class="btn btn-sm btn-light border"
+                    th:attr="hx-get=|/modulo/clientes?action=compras&id=${c.idCliente}|"
+                    hx-target="#zp-modal-slot" hx-swap="innerHTML"
+                    title="Ver compras del cliente">
+              <i class="fa-solid fa-bag-shopping me-1 text-primary"></i>
+              <span class="fw-semibold" th:text="${c.totalCompras} ?: 0">0</span>
+            </button>
+          </td>
+          <td>
+            <span class="badge rounded-pill bg-info text-white" th:if="${c.tieneAccesoWeb}">
+              <i class="fa-solid fa-globe"></i> Sí
+            </span>
+            <span class="badge rounded-pill bg-light text-dark border" th:unless="${c.tieneAccesoWeb}">No</span>
+          </td>
+          <td class="text-end">
+            <!-- 1) Ver compras -->
+            <button type="button" class="btn btn-sm btn-light border"
+                    th:attr="hx-get=|/modulo/clientes?action=compras&id=${c.idCliente}|"
+                    hx-target="#zp-modal-slot" hx-swap="innerHTML" title="Ver compras">
+              <i class="fa-solid fa-eye text-info"></i>
+            </button>
+            <!-- 2) Editar -->
+            <button type="button" class="btn btn-sm btn-primary"
+                    th:attr="hx-get=|/modulo/clientes?action=form&id=${c.idCliente}|"
+                    hx-target="#zp-modal-slot" hx-swap="innerHTML" title="Editar">
+              <i class="fa-solid fa-pen"></i>
+            </button>
+            <!-- 3) Activar / Desactivar -->
+            <button type="button" class="btn btn-sm btn-danger"
+                    th:if="${c.estado == 'ACTIVO'}"
+                    th:attr="hx-post=|/modulo/clientes|,
+                             hx-vals=|{&quot;action&quot;:&quot;toggle&quot;,&quot;idCliente&quot;:${c.idCliente}}|"
+                    hx-target="#zp-clientes-tabla" hx-swap="innerHTML"
+                    hx-confirm="¿Desactivar este cliente?" title="Desactivar">
+              <i class="fa-solid fa-user-slash"></i>
+            </button>
+            <button type="button" class="btn btn-sm btn-success"
+                    th:if="${c.estado != 'ACTIVO'}"
+                    th:attr="hx-post=|/modulo/clientes|,
+                             hx-vals=|{&quot;action&quot;:&quot;toggle&quot;,&quot;idCliente&quot;:${c.idCliente}}|"
+                    hx-target="#zp-clientes-tabla" hx-swap="innerHTML"
+                    hx-confirm="¿Reactivar este cliente?" title="Reactivar">
+              <i class="fa-solid fa-user-check"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>

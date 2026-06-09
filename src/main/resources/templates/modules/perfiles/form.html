@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="modal">
+  <div class="modal fade" id="zpModalPerfil" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+
+        <form th:hx-post="@{/modulo/perfiles}"
+              hx-target="#zp-perfiles-tabla" hx-swap="innerHTML">
+
+          <input type="hidden" name="action"
+                 th:value="${perfil.idRol} != null ? 'save-editar' : 'save-crear'">
+          <input type="hidden" name="idRol" th:if="${perfil.idRol} != null"
+                 th:value="${perfil.idRol}">
+
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="fa-solid fa-shield-halved me-2"></i>
+              <span th:text="${perfil.idRol} != null ? 'Editar Perfil' : 'Nuevo Perfil'">Perfil</span>
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Nombre <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="nombre"
+                     th:value="${perfil.nombre}" maxlength="50" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Descripción</label>
+              <textarea class="form-control" name="descripcion" rows="3"
+                        maxlength="255" th:text="${perfil.descripcion}"></textarea>
+            </div>
+
+            <div class="mb-1" th:if="${perfil.idRol} != null">
+              <label class="form-label">Estado</label>
+              <select class="form-select" name="estado"
+                      th:attr="disabled=${perfil.idRol != null and perfil.idRol == 1}">
+                <option value="ACTIVO" th:selected="${perfil.estado == 'ACTIVO'}">ACTIVO</option>
+                <option value="INACTIVO" th:selected="${perfil.estado == 'INACTIVO'}">INACTIVO</option>
+              </select>
+              <div class="form-text text-danger" th:if="${perfil.idRol == 1}">
+                El Perfil Administrador Base no puede ser desactivado.
+              </div>
+              <input type="hidden" name="estado" value="ACTIVO"
+                     th:if="${perfil.idRol == 1}">
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">
+              <i class="fa-solid fa-floppy-disk me-1"></i> Guardar
+            </button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var el = document.getElementById('zpModalPerfil');
+      if (el && window.bootstrap) {
+        var m = new bootstrap.Modal(el);
+        m.show();
+        el.addEventListener('hidden.bs.modal', function () {
+          var slot = document.getElementById('zp-modal-slot');
+          if (slot) slot.innerHTML = '';
+        });
+      }
+    })();
+  </script>
+</div>
+</body>
+</html>

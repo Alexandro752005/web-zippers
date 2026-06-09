@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="tabla" id="zp-perfiles-tabla-content">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th style="width:22%">NOMBRE</th>
+          <th style="width:42%">DESCRIPCIÓN</th>
+          <th style="width:14%">ESTADO</th>
+          <th style="width:22%" class="text-end">ACCIONES</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:if="${#lists.isEmpty(perfiles)}">
+          <td colspan="4" class="text-center text-muted py-4">
+            No se encontraron perfiles.
+          </td>
+        </tr>
+        <tr th:each="p : ${perfiles}">
+          <td>
+            <span class="fw-semibold" th:text="${p.nombre}">Nombre</span>
+            <div class="small text-muted" th:text="${p.codigo}">CODIGO</div>
+          </td>
+          <td th:text="${p.descripcion} ?: '—'">Descripción</td>
+          <td>
+            <span class="badge rounded-pill bg-success" th:if="${p.estado == 'ACTIVO'}">ACTIVO</span>
+            <span class="badge rounded-pill bg-secondary" th:if="${p.estado != 'ACTIVO'}">INACTIVO</span>
+          </td>
+          <td class="text-end">
+            <button type="button" class="btn btn-sm btn-info text-white"
+                    th:hx-get="@{/modulo/perfiles(action='matriz', id=${p.idRol})}"
+                    hx-target="#zp-modal-slot" hx-swap="innerHTML"
+                    title="Gestionar permisos">
+              <i class="fa-solid fa-key me-1"></i> Permisos
+            </button>
+            <button type="button" class="btn btn-sm btn-primary"
+                    th:hx-get="@{/modulo/perfiles(action='form', id=${p.idRol})}"
+                    hx-target="#zp-modal-slot" hx-swap="innerHTML"
+                    title="Editar perfil">
+              <i class="fa-solid fa-pen me-1"></i> Editar
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>

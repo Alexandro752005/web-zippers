@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="modal">
+  <div class="modal fade" id="zpModalAccesoWeb" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+
+        <form hx-post="/modulo/clientes?action=habilitar-web"
+              hx-target="#zp-clientes-tabla" hx-swap="innerHTML">
+
+          <input type="hidden" name="action" value="habilitar-web">
+          <input type="hidden" name="idCliente" th:value="${acceso.idCliente}">
+
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="fa-solid fa-user-gear me-2"></i>Habilitar Acceso Web
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+
+          <div class="modal-body">
+            <p class="text-muted">
+              Cliente: <strong th:text="${cliente.nombres + ' ' + cliente.apellidos}">Nombre</strong>
+              (DNI <span th:text="${cliente.dni}">00000000</span>)
+            </p>
+
+            <div class="mb-3">
+              <label class="form-label">Correo de acceso <span class="text-danger">*</span></label>
+              <input type="email" class="form-control" name="email"
+                     th:value="${acceso.email}" maxlength="120" required>
+              <div class="form-text">No debe estar registrado como usuario del sistema.</div>
+            </div>
+
+            <div class="mb-1">
+              <label class="form-label">Contraseña temporal <span class="text-danger">*</span></label>
+              <div class="input-group">
+                <input type="text" class="form-control" name="password" id="zpAccesoPass"
+                       th:value="${acceso.password}" minlength="8" maxlength="64" required>
+                <button class="btn btn-light border" type="button" id="zpGenPass" title="Generar">
+                  <i class="fa-solid fa-arrows-rotate"></i>
+                </button>
+              </div>
+              <div class="form-text">Entre 8 y 64 caracteres. El cliente deberá cambiarla luego.</div>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">
+              <i class="fa-solid fa-globe me-1"></i> Habilitar
+            </button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var el = document.getElementById('zpModalAccesoWeb');
+      if (el && window.bootstrap) {
+        var m = new bootstrap.Modal(el);
+        m.show();
+        el.addEventListener('hidden.bs.modal', function () {
+          var slot = document.getElementById('zp-modal-slot');
+          if (slot) slot.innerHTML = '';
+        });
+      }
+      var btn = document.getElementById('zpGenPass');
+      if (btn) {
+        btn.addEventListener('click', function () {
+          var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+          var out = '';
+          for (var i = 0; i < 12; i++) {
+            out += chars.charAt(Math.floor(Math.random() * chars.length));
+          }
+          document.getElementById('zpAccesoPass').value = out;
+        });
+      }
+    })();
+  </script>
+</div>
+</body>
+</html>

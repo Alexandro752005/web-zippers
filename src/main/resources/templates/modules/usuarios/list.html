@@ -1,0 +1,34 @@
+<div xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" class="zp-module" id="zp-modulo-usuarios">
+    <div class="zp-module-head d-flex justify-content-between align-items-start mb-3">
+        <div>
+            <h1 class="zp-module-title h3 mb-1"><i class="fa-solid fa-users-gear text-primary"></i> Gestión de Usuarios</h1>
+            <p class="zp-module-sub text-muted small mb-0">Administración de cuentas del backoffice y accesos del personal</p>
+        </div>
+        <button class="btn btn-primary rounded-0 text-sm" 
+                sec:authorize="hasAuthority('USUARIOS_CREAR') or hasRole('ADMIN')" 
+                th:hx-get="@{/modulo/usuarios(action='form')}" 
+                hx-target="#zp-modal-slot" hx-swap="innerHTML">
+            <i class="fa-solid fa-user-plus me-1"></i> Nuevo Usuario
+        </button>
+    </div>
+
+    <div class="card rounded-0 shadow-sm border-0">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <span class="fw-bold text-secondary text-uppercase small tracking-wider">Cuentas Operativas</span>
+            <div style="width: 280px;">
+                <input type="text" name="q" class="form-control form-control-sm rounded-0 shadow-none" 
+                       placeholder="Buscar por usuario, nombre o DNI..." 
+                       th:hx-get="@{/modulo/usuarios(action='table')}" 
+                       hx-trigger="keyup changed delay:400ms" 
+                       hx-target="#zp-usuarios-tabla" hx-swap="innerHTML" th:value="${q}">
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div id="zp-usuarios-tabla">
+                <div th:replace="~{modules/usuarios/table :: tabla}"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="zp-modal-slot"></div>
+</div>

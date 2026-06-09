@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="modal">
+  <div class="modal fade" id="zpModalCliente" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+
+        <form hx-post="/modulo/clientes"
+              hx-target="#zp-clientes-tabla" hx-swap="innerHTML">
+
+          <input type="hidden" name="action"
+                 th:value="${cliente.idCliente} != null ? 'save-editar' : 'save-crear'">
+          <input type="hidden" name="idCliente" th:if="${cliente.idCliente} != null"
+                 th:value="${cliente.idCliente}">
+
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="fa-solid fa-user me-2"></i>
+              <span th:text="${cliente.idCliente} != null ? 'Editar Cliente' : 'Nuevo Cliente'">Cliente</span>
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+
+          <div class="modal-body">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="form-label">DNI <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="dni"
+                       th:value="${cliente.dni}" maxlength="8"
+                       inputmode="numeric" pattern="[0-9]{8}"
+                       title="8 dígitos numéricos" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Nombres <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="nombres"
+                       th:value="${cliente.nombres}" maxlength="100" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Apellidos <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" name="apellidos"
+                       th:value="${cliente.apellidos}" maxlength="100" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Correo <span class="text-danger">*</span></label>
+                <input type="email" class="form-control" name="email"
+                       th:value="${cliente.email}" maxlength="120" required>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Teléfono</label>
+                <input type="text" class="form-control" name="telefono"
+                       th:value="${cliente.telefono}" maxlength="9"
+                       inputmode="numeric" pattern="[0-9]{9}"
+                       title="9 dígitos numéricos">
+              </div>
+              <div class="col-md-3" th:if="${cliente.idCliente} != null">
+                <label class="form-label">Estado</label>
+                <select class="form-select" name="estado">
+                  <option value="ACTIVO" th:selected="${cliente.estado == 'ACTIVO'}">ACTIVO</option>
+                  <option value="INACTIVO" th:selected="${cliente.estado == 'INACTIVO'}">INACTIVO</option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Dirección</label>
+                <input type="text" class="form-control" name="direccion"
+                       th:value="${cliente.direccion}" maxlength="255">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Referencia de dirección</label>
+                <input type="text" class="form-control" name="referenciaDireccion"
+                       th:value="${cliente.referenciaDireccion}" maxlength="255">
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">
+              <i class="fa-solid fa-floppy-disk me-1"></i> Guardar
+            </button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var el = document.getElementById('zpModalCliente');
+      if (el && window.bootstrap) {
+        var m = new bootstrap.Modal(el);
+        m.show();
+        el.addEventListener('hidden.bs.modal', function () {
+          var slot = document.getElementById('zp-modal-slot');
+          if (slot) slot.innerHTML = '';
+        });
+      }
+    })();
+  </script>
+</div>
+</body>
+</html>

@@ -1,0 +1,62 @@
+spring:
+  application:
+    name: zippers_peru_v2
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/bd_zippers?useSSL=false&serverTimezone=America/Lima&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      # 'validate' = NO modifica la BD; solo valida que las entidades cuadren con las 23 tablas reales.
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+        jdbc:
+          time_zone: America/Lima
+    show-sql: false
+
+  thymeleaf:
+    cache: false
+    encoding: UTF-8
+    prefix: classpath:/templates/
+    suffix: .html
+
+  web:
+    resources:
+      static-locations: classpath:/static/
+
+  # Configuración para la carga de imágenes de productos (Multipart)
+  servlet:
+    multipart:
+      max-file-size: 14MB
+      max-request-size: 20MB
+
+  # Zona horaria fija a Perú estructurada de forma nativa
+  jackson:
+    time-zone: America/Lima
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+    session:
+      timeout: 30m
+  error:
+    whitelabel:
+      enabled: false
+
+logging:
+  level:
+    pe.com.zippers: INFO
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN
+
+# Directorio personalizado para el guardado físico de fotos del catálogo
+zippers:
+  upload-dir: uploads/productos

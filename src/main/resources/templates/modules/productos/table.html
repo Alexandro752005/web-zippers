@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="tabla">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th style="width:6%">IMG</th>
+          <th style="width:24%">PRODUCTO</th>
+          <th style="width:12%">SKU</th>
+          <th style="width:12%">MARCA</th>
+          <th style="width:10%">VARIANTES</th>
+          <th style="width:12%">PRECIO</th>
+          <th style="width:10%">ESTADO</th>
+          <th style="width:14%" class="text-end">ACCIONES</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:if="${#lists.isEmpty(productos)}">
+          <td colspan="8" class="text-center text-muted py-4">No se encontraron productos.</td>
+        </tr>
+        <tr th:each="p : ${productos}">
+          <td>
+            <img th:if="${p.fotoPrincipal != null}" th:src="${p.fotoPrincipal}"
+                 alt="img" style="width:42px;height:42px;object-fit:cover;border:1px solid #dee2e6">
+            <span th:unless="${p.fotoPrincipal != null}" class="text-muted">
+              <i class="fa-regular fa-image"></i>
+            </span>
+          </td>
+          <td>
+            <span class="fw-semibold" th:text="${p.nombre}">Nombre</span>
+            <div class="small text-muted text-truncate" style="max-width:240px"
+                 th:text="${p.descripcion} ?: ''">desc</div>
+          </td>
+          <td th:text="${p.sku}">SKU</td>
+          <td th:text="${p.marca} ?: '—'">Marca</td>
+          <td><span class="badge bg-light text-dark border" th:text="${p.totalVariantes}">0</span></td>
+          <td>S/ <span th:text="${#numbers.formatDecimal(p.precioVenta,1,2)}">0.00</span></td>
+          <td>
+            <span class="badge rounded-pill bg-success" th:if="${p.estado == 'ACTIVO'}">ACTIVO</span>
+            <span class="badge rounded-pill bg-warning text-dark" th:if="${p.estado == 'SUSPENDIDO'}">OCULTO</span>
+            <span class="badge rounded-pill bg-dark" th:if="${p.estado == 'AGOTADO'}">AGOTADO</span>
+            <span class="badge rounded-pill bg-secondary" th:if="${p.estado == 'INACTIVO'}">INACTIVO</span>
+          </td>
+          <td class="text-end">
+            <button type="button" class="btn btn-sm btn-light border"
+                    th:attr="hx-get=|/modulo/productos?action=detalle&id=${p.idProducto}|"
+                    hx-target="#zp-modal-slot" hx-swap="innerHTML" title="Ver">
+              <i class="fa-solid fa-eye text-info"></i>
+            </button>
+            <button type="button" class="btn btn-sm btn-primary"
+                    th:attr="hx-get=|/modulo/productos?action=form&id=${p.idProducto}|"
+                    hx-target="#zp-modal-slot" hx-swap="innerHTML" title="Editar">
+              <i class="fa-solid fa-pen"></i>
+            </button>
+            <button type="button" class="btn btn-sm btn-danger"
+                    th:if="${p.estado == 'ACTIVO'}"
+                    th:attr="hx-post=|/modulo/productos|,
+                             hx-vals=|{&quot;action&quot;:&quot;toggle&quot;,&quot;idProducto&quot;:${p.idProducto}}|"
+                    hx-target="#zp-productos-tabla" hx-swap="innerHTML"
+                    hx-confirm="¿Ocultar este producto?" title="Ocultar">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+            <button type="button" class="btn btn-sm btn-success"
+                    th:unless="${p.estado == 'ACTIVO'}"
+                    th:attr="hx-post=|/modulo/productos|,
+                             hx-vals=|{&quot;action&quot;:&quot;toggle&quot;,&quot;idProducto&quot;:${p.idProducto}}|"
+                    hx-target="#zp-productos-tabla" hx-swap="innerHTML"
+                    hx-confirm="¿Reactivar este producto?" title="Reactivar">
+              <i class="fa-solid fa-rotate-left"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center p-2 border-top">
+    <span class="small text-muted">
+      Página <span th:text="${pageActual + 1}">1</span> de
+      <span th:text="${totalPaginas == 0 ? 1 : totalPaginas}">1</span>
+      (<span th:text="${totalRegistros}">0</span> productos)
+    </span>
+    <div class="btn-group">
+      <button type="button" class="btn btn-sm btn-light border"
+              th:disabled="${pageActual == 0}"
+              th:attr="hx-get=|/modulo/productos?action=table&q=${filtro}&estado=${fEstado}&size=${size}&sort=${sort}&dir=${dir}&page=${pageActual - 1}|"
+              hx-target="#zp-productos-tabla" hx-swap="innerHTML">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+      <button type="button" class="btn btn-sm btn-light border"
+              th:disabled="${pageActual + 1 >= totalPaginas}"
+              th:attr="hx-get=|/modulo/productos?action=table&q=${filtro}&estado=${fEstado}&size=${size}&sort=${sort}&dir=${dir}&page=${pageActual + 1}|"
+              hx-target="#zp-productos-tabla" hx-swap="innerHTML">
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</div>
+</body>
+</html>
